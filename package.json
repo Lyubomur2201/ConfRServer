@@ -1,0 +1,28 @@
+{
+  "name": "confrserver",
+  "version": "1.0.0",
+  "description": "ConfRServer",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lyubomur2201/ConfRServer.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Lyubomur2201/ConfRServer/issues"
+  },
+  "homepage": "https://github.com/Lyubomur2201/ConfRServer#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "joi": "^14.3.1",
+    "mongoose": "^5.4.22",
+    "morgan": "^1.9.1"
+  }
+}
