@@ -5,6 +5,10 @@ const TopicSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true
+  },
+  inviteCode: {
+    type: String,
+    required: true
   }
 });
 
