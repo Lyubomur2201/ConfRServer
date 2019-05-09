@@ -12,20 +12,20 @@ const TopicSchema = new mongoose.Schema({
     unique: true
   },
   author: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     required: true
   },
   questions: [{
-    id: mongoose.Schema.Types.Number,
+    id: Number,
     question: {
       type: String,
       required: true
     },
     upvotes: [{
-      type: mongoose.Schema.Types.ObjectId,
+      type: String,
     }],
     author: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: String,
       required: true
     }
   }]

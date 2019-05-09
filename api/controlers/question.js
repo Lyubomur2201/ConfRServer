@@ -55,11 +55,11 @@ module.exports.upvoteQuestion = async (req, res, next) => {
   if(!question)
     return res.status(404).json({ message: 'Question not found' });
 
-  if(question.upvotes.includes(req.user.id)) {
+  if(question.upvotes.includes(req.user.username)) {
     return res.status(400).json({ message: 'You already upvote this question'});
   };
 
-  question.upvotes.push(req.user.id);
+  question.upvotes.push(req.user.username);
 
   await topic.save();
 
@@ -77,7 +77,7 @@ module.exports.createQuestion = async (req, res, next) => {
   const question = {
     id: topic.questions && topic.questions.length + 1 || 1,
     question: req.body.question,
-    author: req.user.id
+    author: req.user.username
   };
 
   topic.questions.push(question);
