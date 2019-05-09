@@ -1,18 +1,26 @@
 const express = require('express');
+const passport = require('passport');
 
 const controler = require('../controlers/topic');
 const questionRoutes = require('./question');
+const passportConf = require('../passport');
 
 const router = express.Router();
 
-router.get('/all', controler.getAllTopics);
+router.get('/:inviteCode', controler.getTopicByInviteCode);
 
-router.get('/:id', controler.getTopicById);
+router.post('/',
+  passport.authenticate('jwt', { session: false }),
+  controler.createTopic
+);
 
-router.post('/', controler.createTopic);
+router.post('/join',
+  passport.authenticate('jwt', { session: false }),
+  controler.joinTopic
+);
 
-router.use('/:topicId/question', (req, res, next) => {
-  req.topicId = req.params.topicId;
+router.use('/:inviteCode/question', (req, res, next) => {
+  req.topicCode = req.params.inviteCode;
   next();
 }, questionRoutes);
 

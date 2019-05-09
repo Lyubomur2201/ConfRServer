@@ -25,8 +25,9 @@ const UserSchema = new mongoose.Schema({
       type: String,
     },
   },
+  topics: [{ type: mongoose.Schema.Types.ObjectId }],
   isActive: { type: Boolean, default: true },
-  created: { type: Date, default: new Date() },
+  created: { type: Date, default: new Date() }
 });
 
 UserSchema.pre('save', function(next) {

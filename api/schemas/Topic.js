@@ -8,6 +8,11 @@ const TopicSchema = new mongoose.Schema({
   },
   inviteCode: {
     type: String,
+    required: true,
+    unique: true
+  },
+  author: {
+    type: mongoose.Schema.Types.ObjectId,
     required: true
   }
 });
