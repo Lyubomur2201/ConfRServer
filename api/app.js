@@ -6,8 +6,8 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
 
-const userRoutes = require('./routes/user');
 const topicRoutes = require('./routes/topic.js');
+const authRoutes = require('./routes/auth');
 
 const app = express();
 
@@ -31,7 +31,7 @@ app.use((req, res, next) => {
 });
 
 app.use('/topic', topicRoutes);
-app.use('/user', userRoutes);
+app.use('/auth', authRoutes);
 
 app.use((req, res, next) => {
   res.status(404).end();

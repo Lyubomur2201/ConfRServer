@@ -1,37 +1,40 @@
 const mongoose = require('mongoose');
 
-const Question = require('../schemas/Question');
-const User = require('../schemas/User');
+const Topic = require('../schemas/Topic');
 
 module.exports.getAllQuestions = async (req, res, next) => {
+  
+  const topic = await Topic.findOne({inviteCode: req.topicCode});
 
-  const questions = await Question.find({topic: req.topicId});
+  if(!topic)
+    return res.status(404).json({ message: 'Topic not found' });
 
-  res.status(200).json(questions.map(question => {
-      return {
-        id: question.id,
-        question: question.question,
-        topic: question.topic,
-        author: question.author,
-        upvotes: question.upvotes
-      };
-    })
-  );
+  res.status(200).json(topic.questions.map(question => {
+    return {
+      id: question.id,
+      question: question.question,
+      author: question.author,
+      upvotes: question.upvotes
+    };
+  }));
 
 };
 
 module.exports.getQuestionById = async (req, res, next) => {
 
-  const question = await Question.findById(req.params.id );
+  const topic = await Topic.findOne({inviteCode: req.topicCode});
 
-  if(!question) {
+  if(!topic)
+    return res.status(404).json({ message: 'Topic not found' });
+
+  const question = topic.questions.find(question => question.id == req.params.id);
+
+  if(!question)
     return res.status(404).json({ message: 'Question not found' });
-  }
 
   res.status(200).json({
     id: question.id,
     question: question.question,
-    topic: question.topic,
     author: question.author,
     upvotes: question.upvotes
   });
@@ -40,25 +43,25 @@ module.exports.getQuestionById = async (req, res, next) => {
 
 module.exports.upvoteQuestion = async (req, res, next) => {
 
-  const upvoter = await User.findById(req.body.upvoter);
+  const topic = await Topic.findOne({inviteCode: req.topicCode});
 
-  if(!upvoter) {
-    return res.status(404).json({ message: 'User not found' });
-  };
+  if(!topic)
+    return res.status(404).json({ message: 'Topic not found' });
 
-  const question = await Question.findById(req.params.id);
+  const question = topic.questions.find(
+    question => question.id == req.params.id
+  );
 
-  if(!question) {
+  if(!question)
     return res.status(404).json({ message: 'Question not found' });
-  };
-  
-  if(question.upvotes.includes(upvoter.id)) {
-    return res.status(400).json({ message: 'You already upvote this'});
+
+  if(question.upvotes.includes(req.user.id)) {
+    return res.status(400).json({ message: 'You already upvote this question'});
   };
 
-  await question.update({ '$addToSet': { upvotes: req.body.upvoter } }, (err, raw) => {});
+  question.upvotes.push(req.user.id);
 
-  await question.save();
+  await topic.save();
 
   res.status(200).json({ message: 'Question upvoted' });
 
@@ -66,27 +69,25 @@ module.exports.upvoteQuestion = async (req, res, next) => {
 
 module.exports.createQuestion = async (req, res, next) => {
 
-  const exist = await Question.findOne({ question: req.body.question });
+  const topic = await Topic.findOne({inviteCode: req.topicCode});
 
-  if(exist) {
-    return res.status(400).json(
-      { message: 'Question ' + req.body.question + ' alredy exists' }
-      );
-  }
+  if(!topic)
+    return res.status(404).json({ message: 'Topic not found' });
 
-  const question = await new Question({
-    _id: new mongoose.Types.ObjectId(),
+  const question = {
+    id: topic.questions && topic.questions.length + 1 || 1,
     question: req.body.question,
-    author: req.body.author,
-    topic: req.topicId
-  }).save();
+    author: req.user.id
+  };
+
+  topic.questions.push(question);
+
+  await topic.save();
 
   res.status(201).json({
-    id: question.id,
-    question: question.question,
-    author: question.author,
-    topic: question.topic
-  });
-
-
+      id: question.id,
+      question: question.question,
+      author: question.author,
+      upvotes: question.upvotes
+    });
 };
