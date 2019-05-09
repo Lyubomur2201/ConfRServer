@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const TopicSchema = new mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
-  title: {
+  body: {
     type: String,
     required: true
   },
