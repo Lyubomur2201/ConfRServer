@@ -8,7 +8,7 @@ const mongoose = require('mongoose');
 
 const topicRoutes = require('./routes/topic.js');
 const authRoutes = require('./routes/auth');
-
+const userRoutes = require('./routes/user');
 const app = express();
 
 mongoose.connect('mongodb+srv://' + conf.MONGODB_ATLAS_USER + ':' + conf.MONGODB_ATLAS_PSW + '@develop-ws0vx.mongodb.net/test?retryWrites=true', { useNewUrlParser: true });
@@ -32,6 +32,7 @@ app.use((req, res, next) => {
 
 app.use('/topic', topicRoutes);
 app.use('/auth', authRoutes);
+app.use('/user', userRoutes);
 
 app.use((req, res, next) => {
   res.status(404).end();

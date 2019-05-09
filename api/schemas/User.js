@@ -5,7 +5,8 @@ const UserSchema = new mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
   username: {
     type: String,
-    required: true
+    required: true,
+    unique: true
   },
   local: {
     email: { 
@@ -25,31 +26,31 @@ const UserSchema = new mongoose.Schema({
       type: String,
     },
   },
-  topics: [{ type: mongoose.Schema.Types.ObjectId }],
+  topics: [{ type: String }],
   isActive: { type: Boolean, default: true },
   created: { type: Date, default: new Date() }
 });
 
 UserSchema.pre('save', function(next) {
-    try {
-        if(this.strategy === 'local'){
-            bcrypt.hash(this.local.password, 10, (err, hash) => {
-                if(err){                
-                    return next(err);
-                };
-                this.local.password = hash;
-                next();
-            });
-        }
-        if(this.strategy === 'google') {
-            next();
-        }
-        if(this.strategy === 'facebook') {
-            next();
-        }
-    } catch (err) {
-        next(err)
+  try {
+    if(this.strategy === 'local') {
+      bcrypt.hash(this.local.password, 10, (err, hash) => {
+        if(err)                
+          return next(err);
+
+        this.local.password = hash;
+        next();
+      });
     };
+    if(this.strategy === 'google')
+      next();
+
+    if(this.strategy === 'facebook')
+      next();
+
+  } catch (err) {
+    next(err);
+  };
 });
 
 module.exports = mongoose.model('User', UserSchema);

@@ -4,13 +4,12 @@ const Topic = require('../schemas/Topic');
 
 module.exports.getTopicByInviteCode = async (req, res, next) => {
   
-  const topic = await Topic.findById(req.params.inviteCode);
+  const topic = await Topic.findOne({ inviteCode: req.params.inviteCode });
 
   if(!topic)
     return res.status(404).json({ message: 'Topic not found' });
 
   res.status(200).json({
-    id: topic.id,
     body: topic.body,
     inviteCode: topic.inviteCode,
     author: topic.author
@@ -25,10 +24,9 @@ module.exports.joinTopic = async (req, res, next) => {
   if(!topic)
     return res.status(404).json({ message: 'Topic not found' });
 
-  await req.user.update({ '$addToSet': { topics: topic.id } }, (err, raw) => {});
+  await req.user.update({ '$addToSet': { topics: topic.inviteCode } }, (err, raw) => {});
 
   res.status(200).json({
-    id: topic.id,
     body: topic.body,
     inviteCode: topic.inviteCode,
     author: topic.author
@@ -49,13 +47,12 @@ module.exports.createTopic = async (req, res, next) => {
     _id: new mongoose.Types.ObjectId(),
     body: req.body.body,
     inviteCode: req.body.inviteCode,
-    author: req.user.id
+    author: req.user.username
   }).save();
 
-  await req.user.update({ '$addToSet': { topics: topic.id } }, (err, raw) => {});
+  await req.user.update({ '$addToSet': { topics: topic.inviteCode } }, (err, raw) => {});
 
   res.status(201).json({
-    id: topic.id,
     body: topic.body,
     inviteCode: topic.inviteCode,
     author: topic.author

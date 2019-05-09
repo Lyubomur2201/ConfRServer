@@ -44,18 +44,13 @@ module.exports.signup = async (req, res, next) => {
 
   const token = await signToken(user);
 
-  res.status(201).json({
-    message: 'User was saccessfuly created',
-    token: token
-  });
+  res.status(201).json({ token: token });
 
 };
 
 module.exports.signin = async (req, res, next) => {
   const token = await signToken(req.user);
-  return res.status(200).json({
-    token: token
-  });
+  return res.status(200).json({ token: token });
 };
 
 
