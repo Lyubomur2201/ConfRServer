@@ -14,7 +14,21 @@ const TopicSchema = new mongoose.Schema({
   author: {
     type: mongoose.Schema.Types.ObjectId,
     required: true
-  }
+  },
+  questions: [{
+    id: mongoose.Schema.Types.Number,
+    question: {
+      type: String,
+      required: true
+    },
+    upvotes: [{
+      type: mongoose.Schema.Types.ObjectId,
+    }],
+    author: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true
+    }
+  }]
 });
 
 module.exports = mongoose.model('Topic', TopicSchema);
