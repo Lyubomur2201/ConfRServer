@@ -79,7 +79,7 @@ POST | /topic/join | inviteCode | Topic | Adds topic to user topics list. Author
 
 ```
 
-#### Topic creation body"What was happening in past"
+#### Topic creation body
 
 ```json
 
