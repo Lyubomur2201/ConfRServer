@@ -11,7 +11,7 @@ module.exports.getTopicByInviteCode = async (req, res, next) => {
 
   res.status(200).json({
     id: topic.id,
-    title: topic.title,
+    body: topic.body,
     inviteCode: topic.inviteCode,
     author: topic.author
   });
@@ -29,7 +29,7 @@ module.exports.joinTopic = async (req, res, next) => {
 
   res.status(200).json({
     id: topic.id,
-    title: topic.title,
+    body: topic.body,
     inviteCode: topic.inviteCode,
     author: topic.author
   });
@@ -47,7 +47,7 @@ module.exports.createTopic = async (req, res, next) => {
 
   const topic = await new Topic({
     _id: new mongoose.Types.ObjectId(),
-    title: req.body.title,
+    body: req.body.body,
     inviteCode: req.body.inviteCode,
     author: req.user.id
   }).save();
@@ -56,8 +56,9 @@ module.exports.createTopic = async (req, res, next) => {
 
   res.status(201).json({
     id: topic.id,
-    title: topic.title,
-    inviteCode: topic.inviteCode
+    body: topic.body,
+    inviteCode: topic.inviteCode,
+    author: topic.author
   });
 
 };

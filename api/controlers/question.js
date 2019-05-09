@@ -22,7 +22,7 @@ module.exports.getAllQuestions = async (req, res, next) => {
 
 module.exports.getQuestionById = async (req, res, next) => {
 
-  const topic = await Topic.find({inviteCode: req.topicCode});
+  const topic = await Topic.findOne({inviteCode: req.topicCode});
 
   if(!topic)
     return res.status(404).json({ message: 'Topic not found' });

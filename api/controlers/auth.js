@@ -19,8 +19,6 @@ const signToken = async user => {
 
 module.exports.signup = async (req, res, next) => {
 
-  /* Checking is the user width same email or username already exists  */
-
   const emailMatches = await User.findOne({ 'local.email': req.body.email });
   if(emailMatches) {
     return res.status(400).json({ message: 'Email already in use' });
@@ -30,8 +28,6 @@ module.exports.signup = async (req, res, next) => {
   if(usernameMatches) {
     return res.status(400).json({ message: 'Username already in use' });
   };
-
-  /* ------------------------------------------------------------------ */
 
   const user = await new User({
     _id: mongoose.Types.ObjectId(),
