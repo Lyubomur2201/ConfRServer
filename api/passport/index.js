@@ -1,4 +1,3 @@
-const config = require('../../config');
 const passport = require('passport');
 const JWTStategy = require('passport-jwt').Strategy;
 const GooglePlusTokenStrategy = require('passport-google-plus-token');
@@ -12,7 +11,7 @@ const User = require('../schemas/User');
 
 passport.use(new JWTStategy({
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: config.JWT_SECRET
+  secretOrKey: process.env.JWT_SECRET
   }, async (payload, done) => {
     try{
       const user = await User.findById(payload.id);
@@ -31,8 +30,8 @@ passport.use(new JWTStategy({
 );
 
 passport.use('google', new GooglePlusTokenStrategy({
-  clientID: config.GOOGLE_CLIENT_ID,
-  clientSecret: config.GOOGLE_CLIENT_SECRET,
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
 }, async function(accessToken, refreshToken, profile, done) {
 
     try {
@@ -67,8 +66,8 @@ passport.use('google', new GooglePlusTokenStrategy({
 );
 
 passport.use('facebook', new FacebookTokenStrategy({
-  clientID: config.FACEBOOK_CLIENT_ID,
-  clientSecret: config.FACEBOOK_CLIENT_SECRET,
+  clientID: process.env.FACEBOOK_CLIENT_ID,
+  clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
 }, async (accessToken, refreshToken, profile, done) => {
     try {
         

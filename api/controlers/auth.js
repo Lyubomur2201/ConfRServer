@@ -1,7 +1,6 @@
-const config = require('../../config');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
-const mailgun = require("mailgun-js")({apiKey: config.MAILGUN_API_KEY, domain: config.MAILGUN_DOMAIN});
+const mailgun = require("mailgun-js")({apiKey: process.env.MAILGUN_API_KEY, domain: process.env.MAILGUN_DOMAIN});
 const randomstring = require('randomstring');
 const User = require('../schemas/User');
 
@@ -10,7 +9,7 @@ const signToken = async user => {
     username: user.username,
     id: user._id,
   },
-  config.JWT_SECRET,
+  process.env.JWT_SECRET,
   {
     expiresIn: '1y',
   });
