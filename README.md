@@ -6,10 +6,11 @@
 
 Method | Path | Params | Responce Object | Description
 -------|------|--------|-----------------|------------
-POST | /auth/signup | Email, username, password | Bearer Token | Creates new user and returns JWT token
+POST | /auth/signup | Email, username, password |  | Creates new user and sends verification code on your email
 POST | /auth/signin | Username, password | Bearer Token | Returns JWT token
 POST | /auth/google | Access Token | Bearer Token | Takes Google accesss token and and creates new user
 POST | /auth/facebook | Access Token | Bearer Token | Takes Facebook accesss token and and creates new user
+POST | /auth/verify | Verification code | Bearer Token | Verifies your email
 
 #### Examples
 
@@ -42,6 +43,16 @@ POST | /auth/facebook | Access Token | Bearer Token | Takes Facebook accesss tok
 
 {
   "access_token": "{access token}"
+}
+
+```
+
+#### Verify body
+
+```json
+
+{
+  "verificationCode": "A4Rt2b"
 }
 
 ```
@@ -81,8 +92,8 @@ GET | /user/{username} | | User | Returns user profile
 Method | Path | Params | Responce Object | Description
 -------|------|--------|-----------------|------------
 GET | /topic/{inviteCode} | | Topic | Returns topic object
-POST | /topic | body, inviteCode | Topic | Creates new topic. Authorized only
-POST | /topic/join | inviteCode | Topic | Adds topic to user topics list. Authorized only
+POST | /topic | Body, Invite Code | Topic | Creates new topic. Authorized only
+POST | /topic/join | Invite Code | Topic | Adds topic to user topics list. Authorized only
 
 #### Examples
 

@@ -27,7 +27,6 @@ router.post('/reset',
             routes.reset);
 
 
-router.post('/activate/:id',
-            routes.activate);
+router.post('/verify', routes.verify);
 
 module.exports = router;

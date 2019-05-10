@@ -20,6 +20,9 @@ passport.use(new JWTStategy({
       if(!user)
         return done(null, false);
 
+      if(!user.isActive)
+        return done(null, false);
+
       done(null, user);
     } catch(err) {
       done(err, false);
@@ -35,8 +38,11 @@ passport.use('google', new GooglePlusTokenStrategy({
     try {
         
       const match = await User.findOne({ 'google.id': profile.id });
-      if(match)
+      if(match) {
+        if(!match.isActive)
+          return done(null, false);
         return done(null, match);
+      }
       else {
         const user = await User({
           _id: new mongoose.Types.ObjectId(),
@@ -47,7 +53,8 @@ passport.use('google', new GooglePlusTokenStrategy({
             id: profile.id,
             email: profile.emails[0].value
           },
-          created: new Date()
+          created: new Date(),
+          isActive: true
         });
         user.strategy = 'google';
         await user.save();
@@ -66,8 +73,11 @@ passport.use('facebook', new FacebookTokenStrategy({
     try {
         
       const match = await User.findOne({ 'facebook.id': profile.id });
-      if(match)
+      if(match) {
+        if(!match.isActive)
+          return done(null, false);
         return done(null, match);
+      }
       else {                    
         const user = await User({
           _id: new mongoose.Types.ObjectId(),
@@ -78,7 +88,8 @@ passport.use('facebook', new FacebookTokenStrategy({
             id: profile.id,
             email: profile.email
           },
-          created: new Date()
+          created: new Date(),
+          isActive: true
         });
         user.strategy = 'facebook';
         await user.save();
@@ -98,6 +109,9 @@ passport.use(new LocalStrategy({
       const user = await User.findOne({username: username});
 
       if(!user)
+        return done(null, false);
+
+      if(!user.isActive)
         return done(null, false);
       
       const isEqual = await bcrypt.compare(password, user.local.password);

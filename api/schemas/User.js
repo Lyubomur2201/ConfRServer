@@ -27,7 +27,8 @@ const UserSchema = new mongoose.Schema({
     },
   },
   topics: [{ type: String }],
-  isActive: { type: Boolean, default: true },
+  isActive: { type: Boolean, default: false },
+  verificationCode: { type: String },
   created: { type: Date, default: new Date() }
 });
 
