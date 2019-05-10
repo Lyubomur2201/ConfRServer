@@ -16,4 +16,5 @@ config.FACEBOOK_CLIENT_SECRET = '351e7055cdc6682eb776ba42f89d00bf';
 
 config.MAILGUN_API_KEY = '51038dbcb72ec548783b00a6ec3ecbc2-e566273b-06518be9';
 config.MAILGUN_DOMAIN = 'sandbox0f385d18eabd42459e559dc12ab6e6ac.mailgun.org';
+
 module.exports = config;
