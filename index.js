@@ -1,11 +1,11 @@
-const conf = require('./config');
+const dotenv = require('dotenv').config();
 
 const http = require('http');
 
 const app = require('./api/app');
 
-const port = conf.PORT;
-const domain = conf.DOMAIN;
+const port = process.env.PORT;
+const domain = process.env.DOMAIN;
 const server = http.createServer(app);
 
 server.listen(port, domain, () => {
