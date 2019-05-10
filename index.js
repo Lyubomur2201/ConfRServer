@@ -4,8 +4,8 @@ const http = require('http');
 
 const app = require('./api/app');
 
-const port = conf.PORT || 4000;
-const domain = conf.DOMAIN || '0.0.0.0';
+const port = conf.PORT;
+const domain = conf.DOMAIN;
 const server = http.createServer(app);
 
 server.listen(port, domain, () => {
