@@ -1,6 +1,6 @@
 let config = {};
 
-config.DOMAIN = process.env.PORT || '0.0.0.0';
+config.DOMAIN = process.env.DOMAIN || '0.0.0.0';
 config.PORT = process.env.PORT || 5000;
 
 config.MONGODB_ATLAS_PSW = 'ESzMa9pzLfB7Ycq4';
