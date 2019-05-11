@@ -13,8 +13,8 @@ router.get('/me',
 
 router.get('/:username', controler.getUser);
 
-router.put('/reset', controler.resetStart);
+router.post('/forgot', controler.forgot);
 
-router.post('/reset', controler.resetEnd);
+router.post('/reset', controler.reset);
 
 module.exports = router;

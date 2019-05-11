@@ -78,7 +78,6 @@ module.exports.verify = async (req, res, next) => {
   
   if(!user) return res.status(400).json({message: 'Invalid verification code'});
   
-  if(user.isActive) return res.status(200).json({message: 'Email already verified'});
   await user.update({$set: {isActive: true, strategy: 'email-verification'}});
   
   const token = await signToken(user);

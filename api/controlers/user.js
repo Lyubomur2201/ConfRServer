@@ -25,7 +25,8 @@ module.exports.getMyUser = (req, res, next) => {
 
 };
 
-module.exports.resetStart = async (req, res, next) => {
+
+module.exports.forgot = async (req, res, next) => {
 
   const user = await User.findOne({username: req.body.username});
 
@@ -49,7 +50,7 @@ module.exports.resetStart = async (req, res, next) => {
   res.status(200).json({ message: 'Reset code was sent to your email' });
 };
 
-module.exports.resetEnd = async (req, res, next) => {
+module.exports.reset = async (req, res, next) => {
 
   const user = await User.findOne({resetCode: req.body.resetCode});
 
