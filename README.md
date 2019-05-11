@@ -73,6 +73,8 @@ Method | Path | Params | Responce Object | Description
 -------|------|--------|-----------------|------------
 GET | /user/me | | User | Returns current signed in user profile. Authorized only
 GET | /user/{username} | | User | Returns user profile
+POST | /user/forgot | Username | | Sends code for password reset on your email
+POST | /user/reset | Reset code, new password | | Resets your old password to new
 
 #### Examples
 
