@@ -13,4 +13,8 @@ router.get('/me',
 
 router.get('/:username', controler.getUser);
 
+router.put('/reset', controler.resetStart);
+
+router.post('/reset', controler.resetEnd);
+
 module.exports = router;

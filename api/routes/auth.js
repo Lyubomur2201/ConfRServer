@@ -3,30 +3,25 @@ const router = express.Router();
 const passport = require('passport');
 
 const passportCongif = require('../passport');
-const routes = require('../controlers/auth');
+const controler = require('../controlers/auth');
 const validator = require('../validator');
 
 router.post('/signup',
             validator.validate(validator.userSchema),
-            routes.signup);
+            controler.signup);
 
 router.post('/signin',
             passport.authenticate('local', {session: false}),
-            routes.signin);
+            controler.signin);
 
 router.post('/google',
             passport.authenticate('google', {session: false}),
-            routes.google);
+            controler.google);
             
 router.post('/facebook',
             passport.authenticate('facebook', {session: false}),
-            routes.facebook);
+            controler.facebook);
 
-router.post('/reset',
-            passport.authenticate('jwt', {session: false}),
-            routes.reset);
-
-
-router.post('/verify', routes.verify);
+router.post('/verify', controler.verify);
 
 module.exports = router;
