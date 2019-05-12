@@ -22,6 +22,8 @@ router.post('/facebook',
             passport.authenticate('facebook', {session: false}),
             controler.facebook);
 
+router.post('/telegram', controler.telegram);
+
 router.post('/verify', controler.verify);
 
 module.exports = router;

@@ -14,7 +14,9 @@ passport.use(new JWTStategy({
   secretOrKey: process.env.JWT_SECRET
   }, async (payload, done) => {
     try{
-      const user = await User.findById(payload.id);
+      
+      const user = await User.findOne({username: payload.username});
+      
 
       if(!user)
         return done(null, false);

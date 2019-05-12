@@ -72,6 +72,30 @@ module.exports.facebook = async (req, res, next) => {
   return res.status(200).json({ token: token });
 };
 
+module.exports.telegram = async (req, res, next) => {
+  try {    
+    const telegramUser = await jwt.verify(req.header('Authorization').split(' ')[1], process.env.JWT_SECRET);
+    
+    const match = await User.findOne({'telegram.id': telegramUser.id});
+    if(!match) {
+      const user = await new User({
+        _id: mongoose.Types.ObjectId(),
+        username: telegramUser.username,
+        telegram: {
+          id: telegramUser.id,
+          username: telegramUser.username
+        },
+        isActive: true,
+        created: new Date()
+      }).save();
+      res.status(201).end();
+    } else res.status(200).end();
+  } catch(error) {
+    res.status(500).json({ message: 'Invalid token'});
+    console.log(error);
+  };
+};
+
 module.exports.verify = async (req, res, next) => {
   
   const user = await User.findOne({verificationCode: req.body.verificationCode});
