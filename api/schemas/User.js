@@ -31,6 +31,7 @@ const UserSchema = new mongoose.Schema({
     username: { type: String }
   },
   topics: [{ type: String }],
+  myTopics: [{ type: String }],
   isActive: { type: Boolean, default: false },
   verificationCode: { type: String },
   resetCode: { type: String },

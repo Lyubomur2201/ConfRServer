@@ -92,7 +92,7 @@ module.exports.telegram = async (req, res, next) => {
     } else res.status(200).end();
   } catch(error) {
     res.status(500).json({ message: 'Invalid token'});
-    console.log(error);
+    console.error(error);
   };
 };
 

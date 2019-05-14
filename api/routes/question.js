@@ -15,6 +15,11 @@ router.put('/:id',
   controler.upvoteQuestion
 );
 
+router.delete('/:id',
+  passport.authenticate('jwt', { session: false }),
+  controler.deleteQuestion
+);
+
 router.post('/',
   passport.authenticate('jwt', { session: false }),
   controler.createQuestion
