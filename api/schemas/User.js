@@ -26,7 +26,12 @@ const UserSchema = new mongoose.Schema({
       type: String,
     },
   },
+  telegram: {
+    id: { type: String},
+    username: { type: String }
+  },
   topics: [{ type: String }],
+  myTopics: [{ type: String }],
   isActive: { type: Boolean, default: false },
   verificationCode: { type: String },
   resetCode: { type: String },
@@ -44,12 +49,7 @@ UserSchema.pre('save', function(next) {
         this.local.password = hash;
         next();
       });
-    };
-    if(this.strategy == 'google')
-      next();
-
-    if(this.strategy == 'facebook')
-      next();
+    } else next();
 
   } catch (err) {
     next(err);
@@ -58,17 +58,21 @@ UserSchema.pre('save', function(next) {
 
 UserSchema.pre('update', async function(next) {
   try {
-    if(this.getUpdate().$set.strategy == 'password-reset') {
-      const hash = await bcrypt.hash(this.getUpdate().$set.password, 10);
-      this.getUpdate().$set.strategy = 'post-password-reset';
-      await this.update({$set: {'local.password': hash}});
-
-      next();
-    } else if(this.getUpdate().$set.strategy == 'email-verification') {      
-      
-      await this.update({$set: {strategy: 'post-email-verification'}});
-
-      next();
+    if(this.getUpdate().$set) {
+      if(this.getUpdate().$set.strategy == 'password-reset') {
+        const hash = await bcrypt.hash(this.getUpdate().$set.password, 10);
+        this.getUpdate().$set.strategy = 'post-password-reset';
+        await this.update({$set: {'local.password': hash}});
+  
+        next();
+      } else if(this.getUpdate().$set.strategy == 'email-verification') {      
+        
+        await this.update({$set: {strategy: 'post-email-verification'}});
+  
+        next();
+      } else {
+        next();
+      };
     } else {
       next();
     };
@@ -78,12 +82,14 @@ UserSchema.pre('update', async function(next) {
 });
 
 UserSchema.post('update', function(doc) {
-  
-  if(this.getUpdate().$set.strategy == 'post-password-reset') {
-    this.update({$set: {strategy: null, resetCode: null}});
-  };
-  if(this.getUpdate().$set.strategy == 'post-email-verification') {
-    this.update({$set: {strategy: null, verificationCode: null}});
+
+  if(this.getUpdate().$set) {
+    if(this.getUpdate().$set.strategy == 'post-password-reset') {
+      this.update({$set: {strategy: null, resetCode: null}});
+    };
+    if(this.getUpdate().$set.strategy == 'post-email-verification') {
+      this.update({$set: {strategy: null, verificationCode: null}});
+    };
   };
   
 });

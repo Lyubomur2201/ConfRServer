@@ -17,12 +17,30 @@ module.exports.getTopicByInviteCode = async (req, res, next) => {
 
 };
 
+module.exports.deleteTopic = async (req, res, next) => {
+  
+  const topic = await Topic.findOne({inviteCode: req.params.inviteCode});
+
+  if(!topic) return res.status(404).json({ message: 'Topic not found' });
+
+  if(topic.author != req.user.username) return res.status(400).json({ message: 'You cant edit this topic' });
+
+  await topic.delete();
+  await topic.save();
+
+  res.status(200).json({message: 'Topic successfuly deleted'});
+
+};
+
 module.exports.joinTopic = async (req, res, next) => {
 
   const topic = await Topic.findOne({ inviteCode: req.body.inviteCode });
 
   if(!topic)
     return res.status(404).json({ message: 'Topic not found' });
+
+  if(req.user.myTopics.includes(topic.inviteCode)) 
+    return res.status(400).json({message: 'You cant join to topic you created'});
 
   await req.user.update({ '$addToSet': { topics: topic.inviteCode } }, (err, raw) => {});
 
@@ -50,7 +68,7 @@ module.exports.createTopic = async (req, res, next) => {
     author: req.user.username
   }).save();
 
-  await req.user.update({ '$addToSet': { topics: topic.inviteCode } }, (err, raw) => {});
+  await req.user.update({ '$addToSet': { myTopics: topic.inviteCode } }, (err, raw) => {});
 
   res.status(201).json({
     body: topic.body,

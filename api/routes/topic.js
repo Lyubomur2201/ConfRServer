@@ -9,6 +9,11 @@ const router = express.Router();
 
 router.get('/:inviteCode', controler.getTopicByInviteCode);
 
+router.delete('/:inviteCode', 
+  passport.authenticate('jwt', { session: false }),
+  controler.deleteTopic
+);
+
 router.post('/',
   passport.authenticate('jwt', { session: false }),
   controler.createTopic

@@ -20,7 +20,9 @@ module.exports.getMyUser = (req, res, next) => {
   
   res.status(200).json({
     username: req.user.username,
-    email: req.user.local.email || req.user.google.email || req.user.facebook.email
+    email: req.user.local.email || req.user.google.email || req.user.facebook.email,
+    topics: req.user.topics,
+    myTopics: req.user.myTopics
   });
 
 };
