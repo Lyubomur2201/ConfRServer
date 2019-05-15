@@ -78,13 +78,36 @@ POST | /user/reset | Reset code, new password | | Resets your old password to ne
 
 #### Examples
 
+#### Forgot body
+
+```json
+
+{
+  "username": "lyubomur"
+}
+
+```
+
+#### Reset body
+
+```json
+
+{
+  "resetCode": "A4Rt2b",
+  "newPassword": "toor"
+}
+
+```
+
 #### User
 
 ```json
 
 {
     "username": "lyubomur",
-    "email": "example@gmail.com"
+    "email": "example@gmail.com",
+    "topics": ["1", "22"],
+    "myTopics": ["30", "404"]
 }
 
 ```
@@ -94,6 +117,7 @@ POST | /user/reset | Reset code, new password | | Resets your old password to ne
 Method | Path | Params | Responce Object | Description
 -------|------|--------|-----------------|------------
 GET | /topic/{inviteCode} | | Topic | Returns topic object
+DELETE | /topic/{inviteCode} | | | Deletes topic. Available only for owner of topic
 POST | /topic | Body, Invite Code | Topic | Creates new topic. Authorized only
 POST | /topic/join | Invite Code | Topic | Adds topic to user topics list. Authorized only
 
@@ -140,6 +164,7 @@ Method | Path | Params | Responce Object | Description
 GET | .../question | | List of all topic questions | Returns all topic questions
 GET | .../question/{id} | | Question | Returns question by id
 PUT | .../question/{id} | | | Upvotes question. Authorized only, every user can upvote any question only once
+DELETE | /question/{id} | | | Deletes question. Available only for owner of topic
 POST | .../question | question | Question | Creates new question. Authorized only
 
 #### Examples
