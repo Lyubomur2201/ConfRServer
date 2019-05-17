@@ -1,28 +1,30 @@
 const mailgun = require("mailgun-js")({apiKey: process.env.MAILGUN_API_KEY, domain: process.env.MAILGUN_DOMAIN});
 const randomstring = require('randomstring');
-const User = require('../schemas/User');
+
+const User = require('../database/models/User');
 
 module.exports.getUser = async (req, res, next) => {
 
-  const user = await User.findOne({username: req.params.username});
-
+  const user = await User.findOne({
+    where: {username: req.params.username},
+  });
+  
   if(!user)
-    return res.status(404).json({ message: 'User not found' });
-
+  return res.status(404).json({ message: 'User not found' });
+  
   res.status(200).json({
     username: user.username,
-    email: user.local.email || user.google.email || user.facebook.email
+    email: user.email
   });
-
+  
 };
 
 module.exports.getMyUser = (req, res, next) => {
   
   res.status(200).json({
     username: req.user.username,
-    email: req.user.local.email || req.user.google.email || req.user.facebook.email,
-    topics: req.user.topics,
-    myTopics: req.user.myTopics
+    email: req.user.email,
+    topics: req.user.Topics,
   });
 
 };
@@ -30,17 +32,21 @@ module.exports.getMyUser = (req, res, next) => {
 
 module.exports.forgot = async (req, res, next) => {
 
-  const user = await User.findOne({username: req.body.username});
+  const user = await User.findOne({
+    where: {username: req.body.username}
+  });
 
-  if(!user) return res.status(404).json({message: 'User not found'});
+  if(!user)
+    return res.status(404).json({message: 'User not found'});
 
   const resetCode = randomstring.generate(8);
 
-  await user.update({$set: {resetCode: resetCode}});
-  
+  user.setDataValue('resetCode', resetCode);
+  await user.save();
+
   const data = {
     from: 'reset@confR.com',
-  	to: `${user.local.email}`,
+  	to: `${user.email}`,
   	subject: 'Password reset',
     html: `<h2><b>Password reset code ${resetCode}</a></h2>`
   };
@@ -54,11 +60,15 @@ module.exports.forgot = async (req, res, next) => {
 
 module.exports.reset = async (req, res, next) => {
 
-  const user = await User.findOne({resetCode: req.body.resetCode});
+  const user = await User.findOne({
+    where: {resetCode: req.body.resetCode}
+  });
 
-  if(!user) return res.status(400).json({message: 'Wrong resert code'});
+  if(!user) 
+    return res.status(400).json({message: 'Wrong resert code'});
   
-  await user.update({$set: {password: req.body.newPassword, strategy: 'password-reset'}});
+  user.setDataValue('password', req.body.newPassword)
+  await user.save({passwordReset: true});
 
   res.status(200).json({ message: 'Password successfully reseted' });
 };

@@ -1,20 +1,29 @@
-const mongoose = require('mongoose');
-
-const Topic = require('../schemas/Topic');
+const User = require('../database/models/User');
+const Topic = require('../database/models/Topic');
+const Question = require('../database/models/Question');
 
 module.exports.getAllQuestions = async (req, res, next) => {
   
-  const topic = await Topic.findOne({inviteCode: req.topicCode});
+  const topic = await Topic.findOne({
+    where: {inviteCode: req.topicCode},
+    include: [{model: Question, include: ['Users', User]}]
+  });
 
   if(!topic)
     return res.status(404).json({ message: 'Topic not found' });
-
-  res.status(200).json(topic.questions.map(question => {
+  
+  res.status(200).json(topic.Questions.map(question => {
     return {
       id: question.id,
       question: question.question,
-      author: question.author,
-      upvotes: question.upvotes
+      author: {
+        id: question.User.id,
+        username: question.User.username
+      },
+      upvotes: question.Users.map(user => {
+        let {id, username} = user;
+        return {id, username};
+      })
     };
   }));
 
@@ -22,46 +31,60 @@ module.exports.getAllQuestions = async (req, res, next) => {
 
 module.exports.getQuestionById = async (req, res, next) => {
 
-  const topic = await Topic.findOne({inviteCode: req.topicCode});
+  const topic = await Topic.findOne({
+    where: {inviteCode: req.topicCode},
+    include: [{
+      model: Question,
+      include: ['Users', User]
+    }]
+  });
 
   if(!topic)
     return res.status(404).json({ message: 'Topic not found' });
 
-  const question = topic.questions.find(question => question.id == req.params.id);
-
+  const question = topic.Questions.find(question => question.id == req.params.id);
+  
   if(!question)
     return res.status(404).json({ message: 'Question not found' });
 
   res.status(200).json({
     id: question.id,
     question: question.question,
-    author: question.author,
-    upvotes: question.upvotes
+    author: {
+      id: question.User.id,
+      username: question.User.username
+    },
+    upvotes: question.Users.map(user => {
+      let {id, username} = user;
+      return {id, username};
+    })
   });
 
 };
 
 module.exports.upvoteQuestion = async (req, res, next) => {
 
-  const topic = await Topic.findOne({inviteCode: req.topicCode});
+  const topic = await Topic.findOne({
+    where: {inviteCode: req.topicCode},
+    include: [{
+      model: Question,
+      include: ['Users', User]
+    }]
+  });
 
   if(!topic)
     return res.status(404).json({ message: 'Topic not found' });
 
-  const question = topic.questions.find(
-    question => question.id == req.params.id
-  );
-
+  const question = topic.Questions.find(question => question.id == req.params.id);
+  
   if(!question)
     return res.status(404).json({ message: 'Question not found' });
-
-  if(question.upvotes.includes(req.user.username)) {
+  
+  if(question.Users.find(user => user.id == req.user.id)) {
     return res.status(400).json({ message: 'You already upvote this question'});
   };
 
-  question.upvotes.push(req.user.username);
-
-  await topic.save();
+  await question.addUsers(req.user)
 
   res.status(200).json({ message: 'Question upvoted' });
 
@@ -69,19 +92,26 @@ module.exports.upvoteQuestion = async (req, res, next) => {
 
 module.exports.deleteQuestion = async (req, res, next) => {
 
-  const topic = await Topic.findOne({inviteCode: req.topicCode});
+  const topic = await Topic.findOne({
+    where: {inviteCode: req.topicCode},
+    include: [
+      {model: Question},
+      {model: User, as: 'Users', through: {where: {role: 'Creator'}}}
+    ]
+  });
 
-  if(!topic) return res.status(404).json({ message: 'Topic not found' });
+  if(!topic)
+    return res.status(404).json({ message: 'Topic not found' });
 
-  if(topic.author != req.user.username) return res.status(400).json({ message: 'You cant edit this topic' });
+  if(topic.Users[0].id != req.user.id)
+    return res.status(400).json({ message: 'You cant edit this topic' });
 
-  const question = topic.questions.find(
-    question => question.id == req.params.id
-  );
-  if(!question) return res.status(404).json({message: 'Question not found'});
+  const question = topic.Questions.find(question => question.id == req.params.id);
+  
+  if(!question)
+    return res.status(404).json({ message: 'Question not found' });
 
-  topic.questions.splice(topic.questions.indexOf(question));
-  await topic.save();
+  question.destroy();
 
   res.status(200).json({message: 'Question successfuly deleted'});
 
@@ -89,24 +119,25 @@ module.exports.deleteQuestion = async (req, res, next) => {
 
 module.exports.createQuestion = async (req, res, next) => {
 
-  const topic = await Topic.findOne({inviteCode: req.topicCode});
+  const topic = await Topic.findOne({
+    where: {inviteCode: req.topicCode}
+  });
 
   if(!topic) return res.status(404).json({ message: 'Topic not found' });
 
-  const question = {
-    id: topic.questions && topic.questions.length + 1 || 1,
+  const question = await Question.create({
     question: req.body.question,
-    author: req.user.username
-  };
+  });  
 
-  topic.questions.push(question);
-
-  await topic.save();
+  await topic.addQuestion(question);
+  await req.user.addQuestion(question);
 
   res.status(201).json({
       id: question.id,
       question: question.question,
-      author: question.author,
-      upvotes: question.upvotes
+      author: {
+        id: req.user.id,
+        username: req.user.username
+      },
     });
 };
