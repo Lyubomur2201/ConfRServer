@@ -7,20 +7,24 @@ const controler = require('../controlers/auth');
 const validator = require('../validator');
 
 router.post('/signup',
-            validator.validate(validator.userSchema),
-            controler.signup);
+  validator.validate(validator.userSchema),
+  controler.signup
+);
 
 router.post('/signin',
-            passport.authenticate('local', {session: false}),
-            controler.signin);
+  passport.authenticate('local', {session: false}),
+  controler.signin
+);
 
 router.post('/google',
-            passport.authenticate('google', {session: false}),
-            controler.google);
+  passport.authenticate('google', {session: false}),
+  controler.google
+);
             
 router.post('/facebook',
-            passport.authenticate('facebook', {session: false}),
-            controler.facebook);
+  passport.authenticate('facebook', {session: false}),
+  controler.facebook
+);
 
 router.post('/telegram', controler.telegram);
 

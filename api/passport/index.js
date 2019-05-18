@@ -5,19 +5,19 @@ const FacebookTokenStrategy = require('passport-facebook-token');
 const LocalStrategy = require('passport-local').Strategy;
 const { ExtractJwt } = require('passport-jwt');
 const bcrypt = require('bcrypt');
-const mongoose = require('mongoose');
 
-const User = require('../schemas/User');
+const User = require('../database/models/User');
 
 passport.use(new JWTStategy({
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   secretOrKey: process.env.JWT_SECRET
   }, async (payload, done) => {
     try{
+      const user = await User.findOne({
+        where: {username: payload.username},
+        include: 'Topics'
+      });
       
-      const user = await User.findOne({username: payload.username});
-      
-
       if(!user)
         return done(null, false);
 
@@ -35,30 +35,23 @@ passport.use('google', new GooglePlusTokenStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
 }, async function(accessToken, refreshToken, profile, done) {
-
     try {
-        
-      const match = await User.findOne({ 'google.id': profile.id });
+      const match = await User.findOne({
+        where: { 'google': profile.id }
+      });
+      
       if(match) {
         if(!match.isActive)
           return done(null, false);
         return done(null, match);
       }
       else {
-        const user = await User({
-          _id: new mongoose.Types.ObjectId(),
+        const user = await User.create({
           username: profile.displayName,
-          name: profile.name.givenName,
-          surname: profile.name.familyName,
-          google: {
-            id: profile.id,
-            email: profile.emails[0].value
-          },
-          created: new Date(),
+          google:  profile.id,
+          email: profile.emails[0].value,
           isActive: true
         });
-        user.strategy = 'google';
-        await user.save();
         done(null, user);
       };
     } catch(err) {
@@ -72,28 +65,21 @@ passport.use('facebook', new FacebookTokenStrategy({
   clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
 }, async (accessToken, refreshToken, profile, done) => {
     try {
-        
-      const match = await User.findOne({ 'facebook.id': profile.id });
+      const match = await User.findOne({
+        where: { 'facebook': profile.id }
+      });
       if(match) {
         if(!match.isActive)
           return done(null, false);
         return done(null, match);
       }
       else {                    
-        const user = await User({
-          _id: new mongoose.Types.ObjectId(),
+        const user = await User.create({
           username: profile.displayName,
-          name: profile.name.givenName,
-          surname: profile.name.familyName,
-          facebook: {
-            id: profile.id,
-            email: profile.email
-          },
-          created: new Date(),
+          facebook: profile.id,
+          email: profile.email,
           isActive: true
         });
-        user.strategy = 'facebook';
-        await user.save();
         return done(null, user);
       };
     } catch(err) {                
@@ -106,8 +92,9 @@ passport.use(new LocalStrategy({
   usernameField: 'username'
 }, async (username, password, done) => {
     try {
-        
-      const user = await User.findOne({username: username});
+      const user = await User.findOne({
+        where: {username: username}
+      });
 
       if(!user)
         return done(null, false);
@@ -115,7 +102,7 @@ passport.use(new LocalStrategy({
       if(!user.isActive)
         return done(null, false);
       
-      const isEqual = await bcrypt.compare(password, user.local.password);
+      const isEqual = await bcrypt.compare(password, user.password);
       
       if(!isEqual)
         return done(null, false);

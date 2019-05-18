@@ -105,9 +105,26 @@ POST | /user/reset | Reset code, new password | | Resets your old password to ne
 
 {
     "username": "lyubomur",
+    "email": "example@gmail.com"
+}
+
+```
+
+#### My User
+
+```json
+
+{
+    "username": "lyubomur",
     "email": "example@gmail.com",
-    "topics": ["1", "22"],
-    "myTopics": ["30", "404"]
+    "topics": [
+      {
+        "id": 1,
+        "inviteCode": "1",
+        "body": "What was happening in past",
+        "role": "Creator"
+      }
+    ],
 }
 
 ```
@@ -128,9 +145,28 @@ POST | /topic/join | Invite Code | Topic | Adds topic to user topics list. Autho
 ```json
 
 {
-  "body": "What was happening in past",
-  "inviteCode": "1",
-  "author": "lyubomur"
+    "body": "What was happening in past",
+    "inviteCode": "1",
+    "memders": [
+      {
+        "id": 1,
+        "username": "Oleg",
+        "email": "example@gmail.com",
+        "topicRole": "Member"
+      },
+      {
+      "id": 1,
+      "username": "lyubomur",
+      "email": "lyubomur@example.com",
+      "topicRole": "Creator"
+      }
+    ],
+    "creator": {
+      "id": 1,
+      "username": "lyubomur",
+      "email": "lyubomur@example.com",
+      "topicRole": "Creator"
+    }
 }
 
 ```
@@ -176,10 +212,15 @@ POST | .../question | question | Question | Creates new question. Authorized onl
 {
     "id": 1,
     "question": "What exactly happened in 1893?",
-    "author": "olya",
+    "author": {
+      "id": 1,
+      "username": "lyubomur"
+    },
     "upvotes": [
-        "lyubomur",
-        "vasya"
+      {
+        "id": 1,
+        "username": "Vasya"
+      }
     ]
 }
 

@@ -1,13 +1,13 @@
-const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const mailgun = require("mailgun-js")({apiKey: process.env.MAILGUN_API_KEY, domain: process.env.MAILGUN_DOMAIN});
 const randomstring = require('randomstring');
-const User = require('../schemas/User');
+
+const User = require('../database/models/User');
 
 const signToken = async user => {
   const token = await jwt.sign({
     username: user.username,
-    id: user._id,
+    id: user.id,
   },
   process.env.JWT_SECRET,
   {
@@ -19,31 +19,30 @@ const signToken = async user => {
 
 module.exports.signup = async (req, res, next) => {
 
-  const emailMatches = await User.findOne({ 'local.email': req.body.email });
+  const emailMatches = await User.findOne({
+    where: { 'email': req.body.email }
+  });
+
   if(emailMatches)
     return res.status(400).json({ message: 'Email already in use' });
 
-  const usernameMatches = await User.findOne({ username: req.body.username });
+  const usernameMatches = await User.findOne({
+    where: { username: req.body.username }
+  });
+
   if(usernameMatches)
     return res.status(400).json({ message: 'Username already in use' });
 
-  const user = await new User({
-    _id: mongoose.Types.ObjectId(),
+  const user = await User.create({
     username: req.body.username,
-    local: {
-      email: req.body.email,
-      password: req.body.password
-    },
+    email: req.body.email,
+    password: req.body.password,
     verificationCode: randomstring.generate(6),
-    created: new Date()
   });
-
-  user.strategy = 'local';
-  await user.save();
 
   const data = {
   	from: 'verify@confR.com',
-  	to: `${user.local.email}`,
+  	to: `${user.email}`,
   	subject: 'Email verification',
     text: 'Verify your email',
     html: `<h2><b>Verification code ${user.verificationCode}</a></h2>`
@@ -73,36 +72,36 @@ module.exports.facebook = async (req, res, next) => {
 };
 
 module.exports.telegram = async (req, res, next) => {
-  try {    
-    const telegramUser = await jwt.verify(req.header('Authorization').split(' ')[1], process.env.JWT_SECRET);
-    
-    const match = await User.findOne({'telegram.id': telegramUser.id});
-    if(!match) {
-      const user = await new User({
-        _id: mongoose.Types.ObjectId(),
-        username: telegramUser.username,
-        telegram: {
-          id: telegramUser.id,
-          username: telegramUser.username
-        },
-        isActive: true,
-        created: new Date()
-      }).save();
-      res.status(201).end();
-    } else res.status(200).end();
-  } catch(error) {
-    res.status(500).json({ message: 'Invalid token'});
-    console.error(error);
-  };
+  const telegramUser = await jwt.verify(
+    req.header('Authorization').split(' ')[1], process.env.JWT_SECRET);
+  
+  const match = await User.findOne({
+    where: {'telegram': String(telegramUser.id)}
+  });
+
+  if(!match) {
+    const user = await User.create({
+      username: telegramUser.username,
+      telegram: telegramUser.id,
+      isActive: true,
+    });
+
+    res.status(201).end();
+  } else res.status(200).end();
 };
 
 module.exports.verify = async (req, res, next) => {
   
-  const user = await User.findOne({verificationCode: req.body.verificationCode});
+  const user = await User.findOne({
+    where: {verificationCode: req.body.verificationCode}
+  });
   
-  if(!user) return res.status(400).json({message: 'Invalid verification code'});
+  if(!user)
+    return res.status(400).json({message: 'Invalid verification code'});
   
-  await user.update({$set: {isActive: true, strategy: 'email-verification'}});
+  user.setDataValue('isActive',  true);
+  user.setDataValue('verificationCode', null);
+  await user.save();
   
   const token = await signToken(user);
 

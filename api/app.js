@@ -2,15 +2,23 @@ const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const mongoose = require('mongoose');
 
+const sequelize = require('./database');
 const topicRoutes = require('./routes/topic.js');
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
+
 const app = express();
 
-mongoose.connect('mongodb+srv://' + process.env.MONGODB_ATLAS_USER + ':' + process.env.MONGODB_ATLAS_PSW + '@develop-ws0vx.mongodb.net/test?retryWrites=true', { useNewUrlParser: true });
-mongoose.set('useCreateIndex', true);
+sequelize
+  .authenticate()
+  .then(() => {
+    sequelize.sync();
+    console.log('Connection has been established successfully.');
+  })
+  .catch(err => {
+    console.error('Unable to connect to the database:', err);
+  });
 
 app.use(cors());
 app.use(morgan('dev'));
@@ -23,7 +31,7 @@ app.use((req, res, next) => {
     next();
   } catch(e) {
     console.error(e);
-    res.status(500).end();
+    res.status(500).json({message: 'Server Error'});
   };
 
 });
@@ -33,11 +41,11 @@ app.use('/auth', authRoutes);
 app.use('/user', userRoutes);
 
 app.use((req, res, next) => {
-  res.status(404).end();
+  res.status(404).json({message: 'Route not found'});
 });
 
 app.use((req, res, next) => {
-  res.status(500).end();
+  res.status(500).json({message: 'Server Error'});
 });
 
 module.exports = app;
