@@ -31,7 +31,7 @@ app.use((req, res, next) => {
     next();
   } catch(e) {
     console.error(e);
-    res.status(500).end();
+    res.status(500).json({message: 'Server Error'});
   };
 
 });
@@ -41,11 +41,11 @@ app.use('/auth', authRoutes);
 app.use('/user', userRoutes);
 
 app.use((req, res, next) => {
-  res.status(404).end();
+  res.status(404).json({message: 'Route not found'});
 });
 
 app.use((req, res, next) => {
-  res.status(500).end();
+  res.status(500).json({message: 'Server Error'});
 });
 
 module.exports = app;

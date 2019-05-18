@@ -10,7 +10,7 @@ module.exports.getAllQuestions = async (req, res, next) => {
   });
 
   if(!topic)
-    return res.status(404).json({ message: 'Topic not found' });
+    return res.status(404).json({message: 'Topic not found'});
   
   res.status(200).json(topic.Questions.map(question => {
     return {
@@ -40,12 +40,14 @@ module.exports.getQuestionById = async (req, res, next) => {
   });
 
   if(!topic)
-    return res.status(404).json({ message: 'Topic not found' });
+    return res.status(404).json({message: 'Topic not found'});
 
-  const question = topic.Questions.find(question => question.id == req.params.id);
+  const question = topic.Questions.find(
+    question => question.id == req.params.id
+  );
   
   if(!question)
-    return res.status(404).json({ message: 'Question not found' });
+    return res.status(404).json({message: 'Question not found'});
 
   res.status(200).json({
     id: question.id,
@@ -73,20 +75,22 @@ module.exports.upvoteQuestion = async (req, res, next) => {
   });
 
   if(!topic)
-    return res.status(404).json({ message: 'Topic not found' });
+    return res.status(404).json({message: 'Topic not found'});
 
   const question = topic.Questions.find(question => question.id == req.params.id);
   
   if(!question)
-    return res.status(404).json({ message: 'Question not found' });
+    return res.status(404).json({message: 'Question not found'});
   
   if(question.Users.find(user => user.id == req.user.id)) {
-    return res.status(400).json({ message: 'You already upvote this question'});
+    return res.status(400).json(
+      {message: 'You already upvote this question'}
+    );
   };
 
   await question.addUsers(req.user)
 
-  res.status(200).json({ message: 'Question upvoted' });
+  res.status(200).json({message: 'Question upvoted'});
 
 };
 
@@ -101,15 +105,15 @@ module.exports.deleteQuestion = async (req, res, next) => {
   });
 
   if(!topic)
-    return res.status(404).json({ message: 'Topic not found' });
+    return res.status(404).json({message: 'Topic not found'});
 
   if(topic.Users[0].id != req.user.id)
-    return res.status(400).json({ message: 'You cant edit this topic' });
+    return res.status(400).json({message: 'You cant edit this topic'});
 
   const question = topic.Questions.find(question => question.id == req.params.id);
   
   if(!question)
-    return res.status(404).json({ message: 'Question not found' });
+    return res.status(404).json({message: 'Question not found'});
 
   question.destroy();
 
@@ -123,7 +127,7 @@ module.exports.createQuestion = async (req, res, next) => {
     where: {inviteCode: req.topicCode}
   });
 
-  if(!topic) return res.status(404).json({ message: 'Topic not found' });
+  if(!topic) return res.status(404).json({message: 'Topic not found'});
 
   const question = await Question.create({
     question: req.body.question,
@@ -132,12 +136,5 @@ module.exports.createQuestion = async (req, res, next) => {
   await topic.addQuestion(question);
   await req.user.addQuestion(question);
 
-  res.status(201).json({
-      id: question.id,
-      question: question.question,
-      author: {
-        id: req.user.id,
-        username: req.user.username
-      },
-    });
+  res.status(201).json({message: 'Question successfully created'});
 };

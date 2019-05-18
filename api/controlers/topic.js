@@ -9,9 +9,11 @@ module.exports.getTopicByInviteCode = async (req, res, next) => {
   });
   
   if(!topic)
-    return res.status(404).json({ message: 'Topic not found' });
+    return res.status(404).json({message: 'Topic not found'});
 
-  const creator = topic.Users.find(user => user.TopicRole.role == 'Creator');
+  const creator = topic.Users.find(
+    user => user.TopicRole.role == 'Creator'
+  );
   
   res.status(200).json({
     body: topic.body,
@@ -36,14 +38,16 @@ module.exports.deleteTopic = async (req, res, next) => {
   
   const topic = await Topic.findOne({
     where: {inviteCode: req.params.inviteCode},
-    include: [{model: User, as: 'Users', through: {where: {role: 'Creator'}}}]
+    include: [
+      {model: User, as: 'Users', through: {where: {role: 'Creator'}}}
+    ]
   });
     
   if(!topic)
-    return res.status(404).json({ message: 'Topic not found' });
+    return res.status(404).json({message: 'Topic not found'});
   
   if(topic.Users[0].id != req.user.id) 
-    return res.status(400).json({ message: 'You cant edit this topic' });
+    return res.status(400).json({message: 'You cant edit this topic'});
 
   await topic.destroy();
 
@@ -59,7 +63,7 @@ module.exports.joinTopic = async (req, res, next) => {
   });
 
   if(!topic)
-    return res.status(404).json({ message: 'Topic not found' });
+    return res.status(404).json({message: 'Topic not found'});
 
   if(topic.Users == req.user || topic.Users.map(user => user.id).includes(req.user.id)) 
     return res.status(400).json({
@@ -88,9 +92,6 @@ module.exports.createTopic = async (req, res, next) => {
   });
   topic.addUser(req.user, {through: {role: 'Creator'}});
 
-  res.status(201).json({
-    body: topic.body,
-    inviteCode: topic.inviteCode,
-  });
+  res.status(201).json({message: 'Topic successfully created'});
 
 };

@@ -10,7 +10,7 @@ module.exports.getUser = async (req, res, next) => {
   });
   
   if(!user)
-  return res.status(404).json({ message: 'User not found' });
+  return res.status(404).json({message: 'User not found'});
   
   res.status(200).json({
     username: user.username,
@@ -24,7 +24,14 @@ module.exports.getMyUser = (req, res, next) => {
   res.status(200).json({
     username: req.user.username,
     email: req.user.email,
-    topics: req.user.Topics,
+    topics: req.user.Topics.map(topic => {
+      return {
+        id: topic.id,
+        inviteCode: topic.inviteCode,
+        body: topic.body,
+        role: topic.TopicRole.role
+      }
+    }),
   });
 
 };
@@ -55,7 +62,7 @@ module.exports.forgot = async (req, res, next) => {
     if(error) console.error(error);
   });
 
-  res.status(200).json({ message: 'Reset code was sent to your email' });
+  res.status(200).json({message: 'Reset code was sent to your email'});
 };
 
 module.exports.reset = async (req, res, next) => {
@@ -70,5 +77,5 @@ module.exports.reset = async (req, res, next) => {
   user.setDataValue('password', req.body.newPassword)
   await user.save({passwordReset: true});
 
-  res.status(200).json({ message: 'Password successfully reseted' });
+  res.status(200).json({message: 'Password successfully reseted'});
 };

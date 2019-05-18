@@ -13,7 +13,6 @@ passport.use(new JWTStategy({
   secretOrKey: process.env.JWT_SECRET
   }, async (payload, done) => {
     try{
-      
       const user = await User.findOne({
         where: {username: payload.username},
         include: 'Topics'
@@ -36,9 +35,7 @@ passport.use('google', new GooglePlusTokenStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
 }, async function(accessToken, refreshToken, profile, done) {
-
     try {
-        
       const match = await User.findOne({
         where: { 'google': profile.id }
       });
@@ -68,7 +65,6 @@ passport.use('facebook', new FacebookTokenStrategy({
   clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
 }, async (accessToken, refreshToken, profile, done) => {
     try {
-        
       const match = await User.findOne({
         where: { 'facebook': profile.id }
       });
@@ -96,7 +92,6 @@ passport.use(new LocalStrategy({
   usernameField: 'username'
 }, async (username, password, done) => {
     try {
-        
       const user = await User.findOne({
         where: {username: username}
       });
