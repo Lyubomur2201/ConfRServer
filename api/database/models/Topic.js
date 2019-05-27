@@ -1,36 +1,43 @@
-const Sequelize = require('sequelize');
+const Sequelize = require("sequelize");
 
-const sequelize = require('../index');
-const User = require('./User');
+const sequelize = require("../index");
+const User = require("./User");
 
-class Topic extends Sequelize.Model {};
-class TopicRole extends Sequelize.Model {};
+class Topic extends Sequelize.Model {}
+class TopicRole extends Sequelize.Model {}
 
-Topic.init({
-  inviteCode: {
-    type: Sequelize.STRING,
-    unique: true
-  }, body: {
-    type: Sequelize.STRING(1000)
+Topic.init(
+  {
+    inviteCode: {
+      type: Sequelize.STRING,
+      unique: true
+    },
+    body: {
+      type: Sequelize.STRING(1000)
+    }
+  },
+  {
+    sequelize,
+    modelName: "Topic"
   }
-}, {
-  sequelize,
-  modelName: 'Topic'
-});
+);
 
-TopicRole.init({
-  role: Sequelize.STRING
-}, {
-  sequelize,
-  modelName: 'TopicRole'
-});
+TopicRole.init(
+  {
+    role: Sequelize.STRING
+  },
+  {
+    sequelize,
+    modelName: "TopicRole"
+  }
+);
 
 User.belongsToMany(Topic, {
-  as: 'Topics',
+  as: "Topics",
   through: TopicRole
 });
 Topic.belongsToMany(User, {
-  as: 'Users',
+  as: "Users",
   through: TopicRole
 });
 

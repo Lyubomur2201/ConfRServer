@@ -1,33 +1,39 @@
-const Sequelize = require('sequelize');
+const Sequelize = require("sequelize");
 
-const sequelize = require('../index');
-const User = require('./User');
-const Topic = require('./Topic');
+const sequelize = require("../index");
+const User = require("./User");
+const Topic = require("./Topic");
 
-class Question extends Sequelize.Model {};
-class Upvote extends Sequelize.Model {};
+class Question extends Sequelize.Model {}
+class Upvote extends Sequelize.Model {}
 
-Question.init({
-  question: {
-    type: Sequelize.STRING(1000)
+Question.init(
+  {
+    question: {
+      type: Sequelize.STRING(1000)
+    }
+  },
+  {
+    sequelize,
+    modelName: "Question"
   }
-}, {
-  sequelize,
-  modelName: 'Question'
-});
+);
 
-Upvote.init({}, {
-  sequelize,
-  modelName: 'Upvote'
-});
+Upvote.init(
+  {},
+  {
+    sequelize,
+    modelName: "Upvote"
+  }
+);
 
 User.belongsToMany(Question, {
-  as: 'Upvotes',
+  as: "Upvotes",
   through: Upvote
 });
 
 Question.belongsToMany(User, {
-  as: 'Users',
+  as: "Users",
   through: Upvote
 });
 
