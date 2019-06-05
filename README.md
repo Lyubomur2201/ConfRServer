@@ -80,8 +80,8 @@
 
 ```json
 {
-  "username": "lyubomur",
-  "email": "example@gmail.com"
+  "id": 1,
+  "username": "lyubomur"
 }
 ```
 
@@ -119,24 +119,21 @@
 {
   "body": "What was happening in past",
   "inviteCode": "1",
-  "memders": [
+  "members": [
     {
       "id": 1,
       "username": "Oleg",
-      "email": "example@gmail.com",
       "topicRole": "Member"
     },
     {
       "id": 1,
       "username": "lyubomur",
-      "email": "lyubomur@example.com",
       "topicRole": "Creator"
     }
   ],
   "creator": {
     "id": 1,
     "username": "lyubomur",
-    "email": "lyubomur@example.com",
     "topicRole": "Creator"
   }
 }
