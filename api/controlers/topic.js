@@ -14,18 +14,16 @@ module.exports.getTopicByInviteCode = async (req, res, next) => {
   res.status(200).json({
     body: topic.body,
     inviteCode: topic.inviteCode,
-    memders: topic.Users.map(user => {
+    members: topic.Users.map(user => {
       return {
         id: user.id,
         username: user.username,
-        email: user.email,
         topicRole: user.TopicRole.role
       };
     }),
     creator: {
       id: creator.id,
       username: creator.username,
-      email: creator.email,
       topicRole: creator.TopicRole.role
     }
   });

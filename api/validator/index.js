@@ -1,3 +1,5 @@
+// TODO validation for topic and question creation
+
 const Joi = require("joi");
 
 module.exports.userSchema = Joi.object().keys({
