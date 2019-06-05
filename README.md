@@ -89,6 +89,7 @@
 
 ```json
 {
+  "id": 1,
   "username": "lyubomur",
   "email": "example@gmail.com",
   "topics": [
