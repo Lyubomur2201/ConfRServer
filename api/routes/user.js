@@ -3,6 +3,7 @@ const passport = require("passport");
 
 const controler = require("../controlers/user");
 const passportConf = require("../passport");
+const validator = require("../validator");
 
 const router = express.Router();
 
@@ -14,8 +15,8 @@ router.get(
 
 router.get("/:username", controler.getUser);
 
-router.post("/forgot", controler.forgot);
+router.post("/forgot", validator.validate(validator.forgot), controler.forgot);
 
-router.post("/reset", controler.reset);
+router.post("/reset", validator.validate(validator.reset), controler.reset);
 
 module.exports = router;

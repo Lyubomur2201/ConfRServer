@@ -81,9 +81,8 @@ module.exports.upvoteQuestion = async (req, res, next) => {
   if (!question) return res.status(404).json({ message: "Question not found" });
 
   if (question.Users.find(user => user.id == req.user.id)) {
-    return res
-      .status(400)
-      .json({ message: "You already upvote this question" });
+    question.removeUsers(req.user);
+    return res.status(200).json({ message: "Question unvoted" });
   }
 
   await question.addUsers(req.user);
