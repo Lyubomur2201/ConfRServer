@@ -3,6 +3,7 @@ const passport = require("passport");
 
 const controler = require("../controlers/question");
 const passportConf = require("../passport");
+const validator = require("../validator");
 
 const router = express.Router();
 
@@ -25,6 +26,7 @@ router.delete(
 router.post(
   "/",
   passport.authenticate("jwt", { session: false }),
+  validator.validate(validator.question),
   controler.createQuestion
 );
 
