@@ -1,5 +1,3 @@
-// TODO fix readme
-
 # ConfR Server
 
 ## REST API
@@ -107,12 +105,14 @@
 
 ### Topic routes
 
-| Method | Path                | Params            | Responce Object | Description                                      |
-| ------ | ------------------- | ----------------- | --------------- | ------------------------------------------------ |
-| GET    | /topic/{inviteCode} |                   | Topic           | Returns topic object                             |
-| DELETE | /topic/{inviteCode} |                   |                 | Deletes topic. Available only for owner of topic |
-| POST   | /topic              | Body, Invite Code | Topic           | Creates new topic. Authorized only               |
-| POST   | /topic/join         | Invite Code       | Topic           | Adds topic to user topics list. Authorized only  |
+| Method | Path                         | Params            | Responce Object             | Description                                      |
+| ------ | ---------------------------- | ----------------- | --------------------------- | ------------------------------------------------ |
+| GET    | /topic/{inviteCode}          |                   | Topic                       | Returns topic object                             |
+| DELETE | /topic/{inviteCode}          |                   |                             | Deletes topic. Available only for owner of topic |
+| POST   | /topic                       | Body, Invite Code | Topic                       | Creates new topic. Authorized only               |
+| POST   | /topic/join                  | Invite Code       | Topic                       | Adds topic to user topics list. Authorized only  |
+| GET    | /topic/{inviteCode}/question |                   | List of all topic questions | Returns all topic questions                      |
+| POST   | /topic/{inviteCode}/question | question          | Question                    | Creates new question. Authorized only            |
 
 #### Examples
 
@@ -159,16 +159,21 @@
 }
 ```
 
+#### Question creation body
+
+```json
+{
+  "question": "What exactly happened in 1893?"
+}
+```
+
 ### Question routes
 
-| Method | Path                   | Params   | Responce Object             | Description                                                                     |
-| ------ | ---------------------- | -------- | --------------------------- | ------------------------------------------------------------------------------- |
-|        | /topic/{inviteCode}... |          |                             |                                                                                 |
-| GET    | .../question           |          | List of all topic questions | Returns all topic questions                                                     |
-| GET    | .../question/{id}      |          | Question                    | Returns question by id                                                          |
-| PUT    | .../question/{id}      |          |                             | Upvotes question. Authorized only, every user can upvote any question only once |
-| DELETE | /question/{id}         |          |                             | Deletes question. Available only for owner of topic                             |
-| POST   | .../question           | question | Question                    | Creates new question. Authorized only                                           |
+| Method | Path              | Params | Responce Object | Description                                                         |
+| ------ | ----------------- | ------ | --------------- | ------------------------------------------------------------------- |
+| GET    | .../question/{id} |        | Question        | Returns question by id                                              |
+| PUT    | .../question/{id} |        |                 | Upvotes question. Authorized only, after second use unvote question |
+| DELETE | /question/{id}    |        |                 | Deletes question. Available only for owner of topic                 |
 
 #### Examples
 
@@ -188,13 +193,5 @@
       "username": "Vasya"
     }
   ]
-}
-```
-
-#### Question creation body
-
-```json
-{
-  "question": "What exactly happened in 1893?"
 }
 ```
