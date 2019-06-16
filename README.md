@@ -1,3 +1,5 @@
+// TODO fix readme
+
 # ConfR Server
 
 ## REST API

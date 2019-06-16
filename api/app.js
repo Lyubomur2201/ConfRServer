@@ -4,7 +4,8 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 
 const sequelize = require("./database");
-const topicRoutes = require("./routes/topic.js");
+const topicRoutes = require("./routes/topic");
+const questionRoutes = require("./routes/question");
 const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/user");
 
@@ -34,6 +35,7 @@ app.use((req, res, next) => {
   }
 });
 
+app.use("/question", questionRoutes);
 app.use("/topic", topicRoutes);
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);

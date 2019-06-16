@@ -7,8 +7,6 @@ const validator = require("../validator");
 
 const router = express.Router();
 
-router.get("/", controler.getAllQuestions);
-
 router.get("/:id", controler.getQuestionById);
 
 router.put(
@@ -21,13 +19,6 @@ router.delete(
   "/:id",
   passport.authenticate("jwt", { session: false }),
   controler.deleteQuestion
-);
-
-router.post(
-  "/",
-  passport.authenticate("jwt", { session: false }),
-  validator.validate(validator.question),
-  controler.createQuestion
 );
 
 module.exports = router;
