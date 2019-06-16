@@ -1,5 +1,6 @@
 const Topic = require("../database/models/Topic");
 const User = require("../database/models/User");
+const Question = require("../database/models/Question");
 
 module.exports.getTopicByInviteCode = async (req, res, next) => {
   const topic = await Topic.findOne({
@@ -28,6 +29,7 @@ module.exports.getTopicByInviteCode = async (req, res, next) => {
     }
   });
 };
+
 module.exports.deleteTopic = async (req, res, next) => {
   const topic = await Topic.findOne({
     where: { inviteCode: req.params.inviteCode },
@@ -84,4 +86,47 @@ module.exports.createTopic = async (req, res, next) => {
   topic.addUser(req.user, { through: { role: "Creator" } });
 
   res.status(201).json({ message: "Topic successfully created" });
+};
+
+module.exports.getAllQuestions = async (req, res, next) => {
+  const topic = await Topic.findOne({
+    where: { inviteCode: req.params.inviteCode },
+    include: [{ model: Question, include: ["Users", User] }]
+  });
+
+  if (!topic) return res.status(404).json({ message: "Topic not found" });
+
+  res.status(200).json(
+    topic.Questions.map(question => {
+      return {
+        id: question.id,
+        question: question.question,
+        author: {
+          id: question.User.id,
+          username: question.User.username
+        },
+        upvotes: question.Users.map(user => {
+          let { id, username } = user;
+          return { id, username };
+        })
+      };
+    })
+  );
+};
+
+module.exports.createQuestion = async (req, res, next) => {
+  const topic = await Topic.findOne({
+    where: { inviteCode: req.params.inviteCode }
+  });
+
+  if (!topic) return res.status(404).json({ message: "Topic not found" });
+
+  const question = await Question.create({
+    question: req.body.question
+  });
+
+  await topic.addQuestion(question);
+  await req.user.addQuestion(question);
+
+  res.status(201).json({ message: "Question successfully created" });
 };

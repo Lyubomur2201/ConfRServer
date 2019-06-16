@@ -30,13 +30,13 @@ router.post(
   controler.joinTopic
 );
 
-router.use(
+router.get("/:inviteCode/question", controler.getAllQuestions);
+
+router.post(
   "/:inviteCode/question",
-  (req, res, next) => {
-    req.topicCode = req.params.inviteCode;
-    next();
-  },
-  questionRoutes
+  passport.authenticate("jwt", { session: false }),
+  validator.validate(validator.question),
+  controler.createQuestion
 );
 
 module.exports = router;
