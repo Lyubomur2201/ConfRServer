@@ -3,7 +3,7 @@ const router = express.Router();
 const passport = require("passport");
 
 const passportCongif = require("../passport");
-const controler = require("../controlers/auth");
+const controler = require("./auth_controler");
 const validator = require("../validator");
 
 router.post(

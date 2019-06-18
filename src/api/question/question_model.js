@@ -1,8 +1,8 @@
 const Sequelize = require("sequelize");
 
-const sequelize = require("../index");
-const User = require("./User");
-const Topic = require("./Topic");
+const sequelize = require("../database");
+const User = require("../user/user_model");
+const Topic = require("../topic/topic_model");
 
 class Question extends Sequelize.Model {}
 class Upvote extends Sequelize.Model {}

@@ -5,7 +5,7 @@ const mailgun = require("mailgun-js")({
 });
 const randomstring = require("randomstring");
 
-const User = require("../database/models/User");
+const User = require("../user/user_model");
 
 const signToken = async user => {
   const token = await jwt.sign(

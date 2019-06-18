@@ -1,6 +1,6 @@
-const Topic = require("../database/models/Topic");
-const User = require("../database/models/User");
-const Question = require("../database/models/Question");
+const Topic = require("./topic_model");
+const User = require("../user/user_model");
+const Question = require("../question/question_model");
 
 module.exports.getTopicByInviteCode = async (req, res, next) => {
   const topic = await Topic.findOne({

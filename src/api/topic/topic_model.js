@@ -1,7 +1,7 @@
 const Sequelize = require("sequelize");
 
-const sequelize = require("../index");
-const User = require("./User");
+const sequelize = require("../database");
+const User = require("../user/user_model");
 
 class Topic extends Sequelize.Model {}
 class TopicRole extends Sequelize.Model {}

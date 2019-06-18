@@ -1,8 +1,7 @@
 const express = require("express");
 const passport = require("passport");
 
-const controler = require("../controlers/topic");
-const questionRoutes = require("./question");
+const controler = require("./topic_controler");
 const passportConf = require("../passport");
 const validator = require("../validator");
 

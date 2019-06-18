@@ -1,7 +1,7 @@
 const express = require("express");
 const passport = require("passport");
 
-const controler = require("../controlers/question");
+const controler = require("./question_controler");
 const passportConf = require("../passport");
 const validator = require("../validator");
 

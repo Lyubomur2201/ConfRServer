@@ -4,7 +4,7 @@ const mailgun = require("mailgun-js")({
 });
 const randomstring = require("randomstring");
 
-const User = require("../database/models/User");
+const User = require("./user_model");
 
 module.exports.getUser = async (req, res, next) => {
   const user = await User.findOne({

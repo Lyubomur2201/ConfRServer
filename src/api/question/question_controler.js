@@ -1,6 +1,6 @@
-const User = require("../database/models/User");
-const Topic = require("../database/models/Topic");
-const Question = require("../database/models/Question");
+const User = require("../user/user_model");
+const Topic = require("../topic/topic_model");
+const Question = require("./question_model");
 
 module.exports.getQuestionById = async (req, res, next) => {
   const question = await Question.findOne({
@@ -56,7 +56,7 @@ module.exports.deleteQuestion = async (req, res, next) => {
       }
     ]
   });
-  
+
   if (question.Topic.Users[0].id != req.user.id)
     return res.status(400).json({ message: "You cant edit this topic" });
 
