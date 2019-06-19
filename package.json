@@ -6,7 +6,10 @@
   "scripts": {
     "start": "node src/index.js",
     "start-dev": "nodemon src/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "NODE_ENV=TEST mocha --timeout 5000 test/**/**/*.test.js",
+    "report": "nyc --reporter=lcov npm test",
+    "text-report": "nyc --reporter=text-summary npm test",
+    "nyc": "nyc npm test"
   },
   "repository": {
     "type": "git",
@@ -37,5 +40,19 @@
     "pg-hstore": "^2.3.2",
     "randomstring": "^1.1.5",
     "sequelize": "^5.8.6"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
+    "faker": "^4.1.0",
+    "mocha": "^6.1.4"
+  },
+  "nyc": {
+    "exclude": [
+      "test",
+      "node_modules"
+    ],
+    "cache": false,
+    "report-dir": "./test/report"
   }
 }
