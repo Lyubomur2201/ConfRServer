@@ -15,7 +15,9 @@ sequelize
   .authenticate()
   .then(() => {
     sequelize.sync();
-    console.log("Connection has been established successfully.");
+    if (process.env.NODE_ENV != "TEST") {
+      console.log("Connection has been established successfully.");
+    }
   })
   .catch(err => {
     console.error("Unable to connect to the database:", err);

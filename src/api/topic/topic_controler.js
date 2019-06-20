@@ -76,7 +76,7 @@ module.exports.createTopic = async (req, res, next) => {
 
   if (exist)
     return res.status(400).json({
-      message: "Topic " + req.body.inviteCode + " alredy exists"
+      message: "Topic " + req.body.inviteCode + " already exists"
     });
 
   const topic = await Topic.create({

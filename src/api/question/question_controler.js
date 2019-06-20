@@ -3,6 +3,10 @@ const Topic = require("../topic/topic_model");
 const Question = require("./question_model");
 
 module.exports.getQuestionById = async (req, res, next) => {
+  if (Number.isNaN(+req.params.id)) {
+    return res.status(400).json({ message: "Invalid question id" });
+  }
+
   const question = await Question.findOne({
     where: { id: req.params.id },
     include: ["Users", User]
@@ -25,6 +29,10 @@ module.exports.getQuestionById = async (req, res, next) => {
 };
 
 module.exports.upvoteQuestion = async (req, res, next) => {
+  if (Number.isNaN(+req.params.id)) {
+    return res.status(400).json({ message: "Invalid question id" });
+  }
+
   const question = await Question.findOne({
     where: { id: req.params.id },
     include: ["Users", User]
@@ -33,7 +41,7 @@ module.exports.upvoteQuestion = async (req, res, next) => {
   if (!question) return res.status(404).json({ message: "Question not found" });
 
   if (question.Users.find(user => user.id == req.user.id)) {
-    question.removeUsers(req.user);
+    await question.removeUsers(req.user);
     return res.status(200).json({ message: "Question unvoted" });
   }
 
@@ -43,6 +51,10 @@ module.exports.upvoteQuestion = async (req, res, next) => {
 };
 
 module.exports.deleteQuestion = async (req, res, next) => {
+  if (Number.isNaN(+req.params.id)) {
+    return res.status(400).json({ message: "Invalid question id" });
+  }
+
   const question = await Question.findOne({
     where: { id: req.params.id },
     include: [
