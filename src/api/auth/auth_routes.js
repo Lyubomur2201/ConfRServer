@@ -15,22 +15,20 @@ router.post(
 router.post(
   "/signin",
   passport.authenticate("local", { session: false }),
-  controler.signin
+  controler.generateToken
 );
 
 router.post(
   "/google",
   passport.authenticate("google", { session: false }),
-  controler.google
+  controler.generateToken
 );
 
 router.post(
   "/facebook",
   passport.authenticate("facebook", { session: false }),
-  controler.facebook
+  controler.generateToken
 );
-
-router.post("/telegram", controler.telegram);
 
 router.post("/verify", controler.verify);
 

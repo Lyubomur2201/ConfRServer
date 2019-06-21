@@ -5,13 +5,12 @@ const { expect } = require("chai");
 const chaiHttp = require("chai-http");
 const faker = require("faker");
 
-const server = require("../../src/api/app");
-const sequelize = require("../../src/api/database");
+const server = require("../../../src/api/app");
+const sequelize = require("../../../src/api/database");
 
 chai.use(chaiHttp);
 
 describe("Auth route", () => {
-  let token;
   const signup = "/auth/signup";
   const signin = "/auth/signin";
   const username = faker.internet.userName();
@@ -40,10 +39,9 @@ describe("Auth route", () => {
         .post(signup)
         .send({ email, password, username })
         .end((err, res) => {
-          expect(res.status).to.equal(201);
+          expect(res.status).to.be.equal(201);
           expect(res.body).not.to.be.empty;
           expect(res.body).to.have.property("token");
-          token = res.body.token;
           done();
         });
     });
@@ -54,7 +52,7 @@ describe("Auth route", () => {
         .post(signup)
         .send({ username, email: faker.internet.email(), password })
         .end((err, res) => {
-          expect(res.status).to.equal(400);
+          expect(res.status).to.be.equal(400);
           done();
         });
     });
@@ -65,7 +63,7 @@ describe("Auth route", () => {
         .post(signup)
         .send({ username: faker.internet.userName(), email, password })
         .end((err, res) => {
-          expect(res.status).to.equal(400);
+          expect(res.status).to.be.equal(400);
           done();
         });
     });
@@ -87,10 +85,9 @@ describe("Auth route", () => {
         .post(signin)
         .send({ username, password })
         .end((err, res) => {
-          expect(res.status).to.equal(200);
+          expect(res.status).to.be.equal(200);
           expect(res.body).not.to.be.empty;
           expect(res.body).to.have.property("token");
-          expect(res.body.token).to.equal(token);
           done();
         });
     });
@@ -101,7 +98,7 @@ describe("Auth route", () => {
         .post(signin)
         .send({ username: faker.internet.userName(), password })
         .end((err, res) => {
-          expect(res.status).to.equal(401);
+          expect(res.status).to.be.equal(401);
           done();
         });
     });
@@ -112,7 +109,7 @@ describe("Auth route", () => {
         .post(signin)
         .send({ username, password: faker.internet.password() })
         .end((err, res) => {
-          expect(res.status).to.equal(401);
+          expect(res.status).to.be.equal(401);
           done();
         });
     });

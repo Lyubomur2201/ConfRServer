@@ -5,8 +5,8 @@ const { expect } = require("chai");
 const chaiHttp = require("chai-http");
 const faker = require("faker");
 
-const server = require("../../src/api/app");
-const sequelize = require("../../src/api/database");
+const server = require("../../../src/api/app");
+const sequelize = require("../../../src/api/database");
 
 chai.use(chaiHttp);
 
@@ -52,7 +52,7 @@ describe("User route", () => {
         .get(me)
         .set("Authorization", `Bearer ${token}`)
         .end((err, res) => {
-          expect(res.status).to.equal(200);
+          expect(res.status).to.be.equal(200);
           expect(res.body).not.to.be.empty;
           expect(res.body).to.have.property("id");
           expect(res.body).to.have.property("username");
@@ -69,7 +69,7 @@ describe("User route", () => {
         .get(me)
         .set("Authorization", "Bearer FakeToken")
         .end((err, res) => {
-          expect(res.status).to.equal(401);
+          expect(res.status).to.be.equal(401);
           done();
         });
     });
@@ -80,7 +80,7 @@ describe("User route", () => {
         .get(me)
         .set("Authorization", "BadToken")
         .end((err, res) => {
-          expect(res.status).to.equal(401);
+          expect(res.status).to.be.equal(401);
           done();
         });
     });
@@ -90,7 +90,7 @@ describe("User route", () => {
         .request(server)
         .get(me)
         .end((err, res) => {
-          expect(res.status).to.equal(401);
+          expect(res.status).to.be.equal(401);
           done();
         });
     });
@@ -111,7 +111,7 @@ describe("User route", () => {
         .request(server)
         .get(`/user/${username}`)
         .end((err, res) => {
-          expect(res.status).to.equal(200);
+          expect(res.status).to.be.equal(200);
           expect(res.body).not.to.be.empty;
           expect(res.body).to.have.property("id");
           expect(res.body).to.have.property("username");
@@ -124,10 +124,10 @@ describe("User route", () => {
         .request(server)
         .get(`/user/${faker.internet.userName()}`)
         .end((err, res) => {
-          expect(res.status).to.equal(404);
+          expect(res.status).to.be.equal(404);
           expect(res.body).not.to.be.empty;
           expect(res.body).to.have.property("message");
-          expect(res.body.message).to.equal("User not found");
+          expect(res.body.message).to.be.equal("User not found");
           done();
         });
     });

@@ -5,8 +5,8 @@ const { expect } = require("chai");
 const chaiHttp = require("chai-http");
 const faker = require("faker");
 
-const server = require("../../src/api/app");
-const sequelize = require("../../src/api/database");
+const server = require("../../../src/api/app");
+const sequelize = require("../../../src/api/database");
 
 chai.use(chaiHttp);
 
@@ -76,10 +76,10 @@ describe("Topic route", () => {
         .set("Authorization", `Bearer ${token}`)
         .send({ body: topicBody, inviteCode })
         .end((err, res) => {
-          expect(res.status).to.equal(201);
+          expect(res.status).to.be.equal(201);
           expect(res.body).not.to.be.empty;
           expect(res.body).to.have.property("message");
-          expect(res.body.message).to.equal("Topic successfully created");
+          expect(res.body.message).to.be.equal("Topic successfully created");
           done();
         });
     });
@@ -91,10 +91,10 @@ describe("Topic route", () => {
         .set("Authorization", `Bearer ${token}`)
         .send({ body: topicBody, inviteCode })
         .end((err, res) => {
-          expect(res.status).to.equal(400);
+          expect(res.status).to.be.equal(400);
           expect(res.body).not.to.be.empty;
           expect(res.body).to.have.property("message");
-          expect(res.body.message).to.equal(
+          expect(res.body.message).to.be.equal(
             `Topic ${inviteCode} already exists`
           );
           done();
@@ -108,7 +108,7 @@ describe("Topic route", () => {
         .set("Authorization", `Bearer ${token}`)
         .send({ inviteCode })
         .end((err, res) => {
-          expect(res.status).to.equal(400);
+          expect(res.status).to.be.equal(400);
           expect(res.body).not.to.be.empty;
           done();
         });
@@ -121,7 +121,7 @@ describe("Topic route", () => {
         .set("Authorization", `Bearer ${token}`)
         .send({ body: topicBody })
         .end((err, res) => {
-          expect(res.status).to.equal(400);
+          expect(res.status).to.be.equal(400);
           expect(res.body).not.to.be.empty;
           done();
         });
@@ -134,7 +134,7 @@ describe("Topic route", () => {
         .set("Authorization", `Bearer ${token}`)
         .send({})
         .end((err, res) => {
-          expect(res.status).to.equal(400);
+          expect(res.status).to.be.equal(400);
           expect(res.body).not.to.be.empty;
           done();
         });
@@ -146,7 +146,7 @@ describe("Topic route", () => {
         .post(topic)
         .send({ body: faker.lorem.sentence(), inviteCode: faker.random.word() })
         .end((err, res) => {
-          expect(res.status).to.equal(401);
+          expect(res.status).to.be.equal(401);
           done();
         });
     });
@@ -167,10 +167,10 @@ describe("Topic route", () => {
         .request(server)
         .get(`/topic/${inviteCode}`)
         .end((err, res) => {
-          expect(res.status).to.equal(200);
+          expect(res.status).to.be.equal(200);
           expect(res.body).not.to.be.empty;
           expect(res.body).to.have.property("inviteCode");
-          expect(res.body.inviteCode).to.equal(inviteCode);
+          expect(res.body.inviteCode).to.be.equal(inviteCode);
           done();
         });
     });
@@ -180,7 +180,7 @@ describe("Topic route", () => {
         .request(server)
         .get("/topic/fakeCode")
         .end((err, res) => {
-          expect(res.status).to.equal(404);
+          expect(res.status).to.be.equal(404);
           expect(res.body).not.to.be.empty;
           expect(res.body).to.have.property("message");
           done();
@@ -205,10 +205,10 @@ describe("Topic route", () => {
         .set("Authorization", `Bearer ${token}`)
         .send({ inviteCode })
         .end((err, res) => {
-          expect(res.status).to.equal(400);
+          expect(res.status).to.be.equal(400);
           expect(res.body).not.to.be.empty;
           expect(res.body).to.have.property("message");
-          expect(res.body.message).to.equal("You already joined this topic");
+          expect(res.body.message).to.be.equal("You already joined this topic");
           done();
         });
     });
@@ -220,10 +220,10 @@ describe("Topic route", () => {
         .set("Authorization", `Bearer ${token2}`)
         .send({ inviteCode })
         .end((err, res) => {
-          expect(res.status).to.equal(200);
+          expect(res.status).to.be.equal(200);
           expect(res.body).not.to.be.empty;
           expect(res.body).to.have.property("message");
-          expect(res.body.message).to.equal("You joined the topic");
+          expect(res.body.message).to.be.equal("You joined the topic");
           done();
         });
     });
@@ -236,10 +236,10 @@ describe("Topic route", () => {
       .set("Authorization", `Bearer ${token}`)
       .send({ inviteCode: "FakeCode" })
       .end((err, res) => {
-        expect(res.status).to.equal(404);
+        expect(res.status).to.be.equal(404);
         expect(res.body).not.to.be.empty;
         expect(res.body).to.have.property("message");
-        expect(res.body.message).to.equal("Topic not found");
+        expect(res.body.message).to.be.equal("Topic not found");
         done();
       });
   });
@@ -251,7 +251,7 @@ describe("Topic route", () => {
       .set("Authorization", `Bearer ${token}`)
       .send({})
       .end((err, res) => {
-        expect(res.status).to.equal(400);
+        expect(res.status).to.be.equal(400);
         expect(res.body).not.to.be.empty;
         done();
       });
@@ -264,7 +264,7 @@ describe("Topic route", () => {
       .set("Authorization", `Bearer ${token}`)
       .send({})
       .end((err, res) => {
-        expect(res.status).to.equal(400);
+        expect(res.status).to.be.equal(400);
         expect(res.body).not.to.be.empty;
         done();
       });
@@ -277,7 +277,7 @@ describe("Topic route", () => {
       .set("Authorization", `Bearer ${token}`)
       .send({})
       .end((err, res) => {
-        expect(res.status).to.equal(400);
+        expect(res.status).to.be.equal(400);
         expect(res.body).not.to.be.empty;
         done();
       });
@@ -289,7 +289,7 @@ describe("Topic route", () => {
       .post(join)
       .send({ inviteCode })
       .end((err, res) => {
-        expect(res.status).to.equal(401);
+        expect(res.status).to.be.equal(401);
         done();
       });
   });
@@ -316,7 +316,7 @@ describe("Topic route", () => {
         .request(server)
         .get(questionRoute)
         .end((err, res) => {
-          expect(res.status).to.equal(200);
+          expect(res.status).to.be.equal(200);
           expect(res.body).to.be.empty;
           done();
         });
@@ -329,7 +329,7 @@ describe("Topic route", () => {
         .set("Authorization", `Bearer ${token}`)
         .send({ question })
         .end((err, res) => {
-          expect(res.status).to.equal(201);
+          expect(res.status).to.be.equal(201);
           expect(res.body).not.to.be.empty;
           expect(res.body).to.have.property("message");
           done();
@@ -343,7 +343,7 @@ describe("Topic route", () => {
         .set("Authorization", `Bearer ${token}`)
         .send({})
         .end((err, res) => {
-          expect(res.status).to.equal(400);
+          expect(res.status).to.be.equal(400);
           expect(res.body).not.to.be.empty;
           done();
         });
@@ -354,7 +354,7 @@ describe("Topic route", () => {
         .request(server)
         .get(questionRoute)
         .end((err, res) => {
-          expect(res.status).to.equal(200);
+          expect(res.status).to.be.equal(200);
           expect(res.body).not.to.be.empty;
           expect(res.body).to.have.lengthOf(1);
           done();
@@ -368,7 +368,7 @@ describe("Topic route", () => {
         .set("Authorization", `Bearer ${token}`)
         .send({ question })
         .end((err, res) => {
-          expect(res.status).to.equal(404);
+          expect(res.status).to.be.equal(404);
           expect(res.body).not.to.be.empty;
           expect(res.body).to.have.property("message");
           done();
@@ -380,7 +380,7 @@ describe("Topic route", () => {
         .request(server)
         .get("/topic/invalidTopic/question")
         .end((err, res) => {
-          expect(res.status).to.equal(404);
+          expect(res.status).to.be.equal(404);
           expect(res.body).not.to.be.empty;
           expect(res.body).to.have.property("message");
           done();
@@ -411,7 +411,7 @@ describe("Topic route", () => {
         .delete(delRoute)
         .set("Authorization", `Bearer ${token2}`)
         .end((err, res) => {
-          expect(res.status).to.equal(400);
+          expect(res.status).to.be.equal(400);
           expect(res.body).not.to.be.empty;
           expect(res.body).to.have.property("message");
           done();
@@ -424,7 +424,7 @@ describe("Topic route", () => {
         .delete("/topic/fakeCode")
         .set("Authorization", `Bearer ${token2}`)
         .end((err, res) => {
-          expect(res.status).to.equal(404);
+          expect(res.status).to.be.equal(404);
           expect(res.body).not.to.be.empty;
           expect(res.body).to.have.property("message");
           done();
@@ -436,7 +436,7 @@ describe("Topic route", () => {
         .request(server)
         .delete(delRoute)
         .end((err, res) => {
-          expect(res.status).to.equal(401);
+          expect(res.status).to.be.equal(401);
           done();
         });
     });
@@ -447,7 +447,7 @@ describe("Topic route", () => {
         .delete(delRoute)
         .set("Authorization", `Bearer ${token}`)
         .end((err, res) => {
-          expect(res.status).to.equal(200);
+          expect(res.status).to.be.equal(200);
           expect(res.body).not.to.be.empty;
           expect(res.body).to.have.property("message");
           done();

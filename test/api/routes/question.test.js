@@ -5,8 +5,8 @@ const { expect } = require("chai");
 const chaiHttp = require("chai-http");
 const faker = require("faker");
 
-const server = require("../../src/api/app");
-const sequelize = require("../../src/api/database");
+const server = require("../../../src/api/app");
+const sequelize = require("../../../src/api/database");
 
 chai.use(chaiHttp);
 
@@ -69,10 +69,10 @@ describe("Question route", () => {
       .set("Authorization", `Bearer ${token}`)
       .send({ body: topicBody, inviteCode })
       .end((err, res) => {
-        expect(res.status).to.equal(201);
+        expect(res.status).to.be.equal(201);
         expect(res.body).not.to.be.empty;
         expect(res.body).to.have.property("message");
-        expect(res.body.message).to.equal("Topic successfully created");
+        expect(res.body.message).to.be.equal("Topic successfully created");
         done();
       });
   });
@@ -84,10 +84,10 @@ describe("Question route", () => {
       .set("Authorization", `Bearer ${token2}`)
       .send({ inviteCode })
       .end((err, res) => {
-        expect(res.status).to.equal(200);
+        expect(res.status).to.be.equal(200);
         expect(res.body).not.to.be.empty;
         expect(res.body).to.have.property("message");
-        expect(res.body.message).to.equal("You joined the topic");
+        expect(res.body.message).to.be.equal("You joined the topic");
         done();
       });
   });
@@ -99,7 +99,7 @@ describe("Question route", () => {
       .set("Authorization", `Bearer ${token}`)
       .send({ question })
       .end((err, res) => {
-        expect(res.status).to.equal(201);
+        expect(res.status).to.be.equal(201);
         expect(res.body).not.to.be.empty;
         expect(res.body).to.have.property("message");
         done();
@@ -142,10 +142,10 @@ describe("Question route", () => {
         .request(server)
         .get(questionRoute)
         .end((err, res) => {
-          expect(res.status).to.equal(200);
+          expect(res.status).to.be.equal(200);
           expect(res.body).not.to.be.empty;
           expect(res.body).to.have.property("id");
-          expect(res.body.id).to.equal(questionID);
+          expect(res.body.id).to.be.equal(questionID);
           done();
         });
     });
@@ -155,7 +155,7 @@ describe("Question route", () => {
         .request(server)
         .get("/question/fakeID")
         .end((err, res) => {
-          expect(res.status).to.equal(400);
+          expect(res.status).to.be.equal(400);
           expect(res.body).not.to.be.empty;
           expect(res.body).to.have.property("message");
           done();
@@ -167,7 +167,7 @@ describe("Question route", () => {
         .request(server)
         .get("/question/-1")
         .end((err, res) => {
-          expect(res.status).to.equal(404);
+          expect(res.status).to.be.equal(404);
           expect(res.body).not.to.be.empty;
           expect(res.body).to.have.property("message");
           done();
@@ -190,7 +190,7 @@ describe("Question route", () => {
         .request(server)
         .get(questionRoute)
         .end((err, res) => {
-          expect(res.status).to.equal(200);
+          expect(res.status).to.be.equal(200);
           expect(res.body).not.to.be.empty;
           expect(res.body).to.have.property("upvotes");
           expect(res.body.upvotes).to.be.lengthOf(0);
@@ -204,10 +204,10 @@ describe("Question route", () => {
         .put(questionRoute)
         .set("Authorization", `Bearer ${token}`)
         .end((err, res) => {
-          expect(res.status).to.equal(200);
+          expect(res.status).to.be.equal(200);
           expect(res.body).not.to.be.empty;
           expect(res.body).to.have.property("message");
-          expect(res.body.message).to.equal("Question upvoted");
+          expect(res.body.message).to.be.equal("Question upvoted");
           done();
         });
     });
@@ -217,7 +217,7 @@ describe("Question route", () => {
         .request(server)
         .get(questionRoute)
         .end((err, res) => {
-          expect(res.status).to.equal(200);
+          expect(res.status).to.be.equal(200);
           expect(res.body).not.to.be.empty;
           expect(res.body).to.have.property("upvotes");
           expect(res.body.upvotes).to.be.lengthOf(1);
@@ -231,10 +231,10 @@ describe("Question route", () => {
         .put(questionRoute)
         .set("Authorization", `Bearer ${token}`)
         .end((err, res) => {
-          expect(res.status).to.equal(200);
+          expect(res.status).to.be.equal(200);
           expect(res.body).not.to.be.empty;
           expect(res.body).to.have.property("message");
-          expect(res.body.message).to.equal("Question unvoted");
+          expect(res.body.message).to.be.equal("Question unvoted");
           done();
         });
     });
@@ -244,10 +244,36 @@ describe("Question route", () => {
         .request(server)
         .get(questionRoute)
         .end((err, res) => {
-          expect(res.status).to.equal(200);
+          expect(res.status).to.be.equal(200);
           expect(res.body).not.to.be.empty;
           expect(res.body).to.have.property("upvotes");
           expect(res.body.upvotes).to.be.lengthOf(0);
+          done();
+        });
+    });
+
+    it("Should return status 400 when invalid question id provided", done => {
+      chai
+        .request(server)
+        .put("/question/fakeID")
+        .set("Authorization", `Bearer ${token}`)
+        .end((err, res) => {
+          expect(res.status).to.be.equal(400);
+          expect(res.body).not.to.be.empty;
+          expect(res.body).to.have.property("message");
+          done();
+        });
+    });
+
+    it("Should return status 404 when question with provided id not exist", done => {
+      chai
+        .request(server)
+        .put("/question/-1")
+        .set("Authorization", `Bearer ${token}`)
+        .end((err, res) => {
+          expect(res.status).to.be.equal(404);
+          expect(res.body).not.to.be.empty;
+          expect(res.body).to.have.property("message");
           done();
         });
     });
@@ -269,10 +295,10 @@ describe("Question route", () => {
         .delete(questionRoute)
         .set("Authorization", `Bearer ${token2}`)
         .end((err, res) => {
-          expect(res.status).to.equal(400);
+          expect(res.status).to.be.equal(400);
           expect(res.body).not.to.be.empty;
           expect(res.body).to.have.property("message");
-          expect(res.body.message).to.equal("You cant edit this topic");
+          expect(res.body.message).to.be.equal("You cant edit this topic");
           done();
         });
     });
@@ -283,10 +309,36 @@ describe("Question route", () => {
         .delete(questionRoute)
         .set("Authorization", `Bearer ${token}`)
         .end((err, res) => {
-          expect(res.status).to.equal(200);
+          expect(res.status).to.be.equal(200);
           expect(res.body).not.to.be.empty;
           expect(res.body).to.have.property("message");
-          expect(res.body.message).to.equal("Question successfuly deleted");
+          expect(res.body.message).to.be.equal("Question successfuly deleted");
+          done();
+        });
+    });
+
+    it("Should return status 400 when invalid question id provided", done => {
+      chai
+        .request(server)
+        .delete("/question/fakeID")
+        .set("Authorization", `Bearer ${token}`)
+        .end((err, res) => {
+          expect(res.status).to.be.equal(400);
+          expect(res.body).not.to.be.empty;
+          expect(res.body).to.have.property("message");
+          done();
+        });
+    });
+
+    it("Should return status 404 when question with provided id not exist", done => {
+      chai
+        .request(server)
+        .delete("/question/-1")
+        .set("Authorization", `Bearer ${token}`)
+        .end((err, res) => {
+          expect(res.status).to.be.equal(404);
+          expect(res.body).not.to.be.empty;
+          expect(res.body).to.have.property("message");
           done();
         });
     });

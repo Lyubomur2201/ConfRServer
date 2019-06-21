@@ -10,7 +10,6 @@ const User = require("../user/user_model");
 const signToken = async user => {
   const token = await jwt.sign(
     {
-      username: user.username,
       id: user.id
     },
     process.env.JWT_SECRET,
@@ -55,45 +54,15 @@ module.exports.signup = async (req, res, next) => {
   // mailgun.messages().send(data, (error, body) => {
   //   if (error) console.error(error);
   // });
+
   const token = await signToken(user);
 
   res.status(201).json({ token: token });
 };
 
-module.exports.signin = async (req, res, next) => {
+module.exports.generateToken = async (req, res, next) => {
   const token = await signToken(req.user);
   return res.status(200).json({ token: token });
-};
-
-module.exports.google = async (req, res, next) => {
-  const token = await signToken(req.user);
-  return res.status(200).json({ token: token });
-};
-
-module.exports.facebook = async (req, res, next) => {
-  const token = await signToken(req.user);
-  return res.status(200).json({ token: token });
-};
-
-module.exports.telegram = async (req, res, next) => {
-  const telegramUser = await jwt.verify(
-    req.header("Authorization").split(" ")[1],
-    process.env.JWT_SECRET
-  );
-
-  const match = await User.findOne({
-    where: { telegram: String(telegramUser.id) }
-  });
-
-  if (!match) {
-    const user = await User.create({
-      username: telegramUser.username,
-      telegram: telegramUser.id,
-      isActive: true
-    });
-
-    res.status(201).end();
-  } else res.status(200).end();
 };
 
 module.exports.verify = async (req, res, next) => {
@@ -106,6 +75,7 @@ module.exports.verify = async (req, res, next) => {
 
   user.setDataValue("isActive", true);
   user.setDataValue("verificationCode", null);
+  
   await user.save();
 
   const token = await signToken(user);

@@ -45,7 +45,10 @@
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
     "faker": "^4.1.0",
-    "mocha": "^6.1.4"
+    "mocha": "^6.1.4",
+    "rewire": "^4.0.1",
+    "sinon": "^7.3.2",
+    "sinon-chai": "^3.3.0"
   },
   "nyc": {
     "exclude": [

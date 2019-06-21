@@ -69,10 +69,11 @@ module.exports.deleteQuestion = async (req, res, next) => {
     ]
   });
 
+  if (!question) return res.status(404).json({ message: "Question not found" });
+  
   if (question.Topic.Users[0].id != req.user.id)
     return res.status(400).json({ message: "You cant edit this topic" });
 
-  if (!question) return res.status(404).json({ message: "Question not found" });
 
   question.destroy();
 

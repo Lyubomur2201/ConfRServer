@@ -17,7 +17,7 @@ passport.use(
     async (payload, done) => {
       try {
         const user = await User.findOne({
-          where: { username: payload.username },
+          where: { id: payload.id },
           include: "Topics"
         });
 

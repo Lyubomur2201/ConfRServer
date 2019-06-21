@@ -19,7 +19,7 @@ module.exports.getUser = async (req, res, next) => {
   });
 };
 
-module.exports.getMyUser = (req, res, next) => {
+module.exports.getMyUser = async (req, res, next) => {
   res.status(200).json({
     id: req.user.id,
     username: req.user.username,
