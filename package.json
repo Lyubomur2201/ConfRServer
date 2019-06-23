@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
-    "start-dev": "nodemon src/index.js",
+    "dev": "nodemon src/index.js",
     "test": "NODE_ENV=TEST mocha --timeout 5000 test/**/**/*.test.js",
     "report": "nyc --reporter=lcov npm test",
     "text-report": "nyc --reporter=text-summary npm test",
@@ -27,6 +27,8 @@
     "cors": "^2.8.5",
     "dotenv": "^8.0.0",
     "express": "^4.16.4",
+    "express-graphql": "^0.8.0",
+    "graphql": "^14.3.1",
     "joi": "^14.3.1",
     "jsonwebtoken": "^8.5.1",
     "mailgun-js": "^0.22.0",
