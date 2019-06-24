@@ -2,16 +2,15 @@ const express = require("express");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-var graphqlHTTP = require("express-graphql");
-var { buildSchema } = require("graphql");
 
 const sequelize = require("./database");
+const graphql = require("./graphql");
+
 const topicRoutes = require("./topic/topic_routes");
 const questionRoutes = require("./question/question_routes");
 const authRoutes = require("./auth/auth_routes");
 const userRoutes = require("./user/user_routes");
 
-const Topic = require("./topic/topic_model");
 const app = express();
 
 sequelize
@@ -42,54 +41,8 @@ app.use((req, res, next) => {
   }
 });
 
-app.use(
-  "/graphql",
-  graphqlHTTP({
-    graphiql: true,
-    schema: buildSchema(`
-    type User {
-      id: ID!
-      username: String!
-      email: String
-      topics: [Topic!]
-    }
+app.use("/graphql", graphql);
 
-    type Topic {
-      id: ID!
-      inviteCode: String!
-      body: String!
-      members: [User!]!
-      creator: User!
-    }
-
-    type Question {
-      id: ID!
-      question: String!
-      topic: Topic!
-      author: User!
-      upvotes: [User!]
-    }
-
-    type RootQuery {
-      topic(id: ID!): Topic
-    }
-
-    type RootMutation {
-      createTopic(arg: String): [String]
-    }
-
-    schema {
-      query: RootQuery
-      mutation: RootMutation
-    }
-  `),
-    rootValue: {
-      async topic(opt) {
-        return await Topic.findOne({ where: { id: opt.id } });
-      }
-    }
-  })
-);
 app.use("/question", questionRoutes);
 app.use("/topic", topicRoutes);
 app.use("/auth", authRoutes);
