@@ -20,7 +20,6 @@ module.exports = buildSchema(`
     type Question {
       id: ID!
       question: String!
-      topic: Topic!
       author: User!
       upvotes: [User!]
     }
@@ -50,7 +49,7 @@ module.exports = buildSchema(`
     type RootQuery {
       myUser: User!
       user(userID: ID!): User
-      topic(id: ID!): Topic
+      topic(inviteCode: String!): Topic
       question(questionID: ID!): Question
     }
 
