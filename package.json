@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/Lyubomur2201/ConfRServer#readme",
   "dependencies": {
-    "bcrypt": "^3.0.5",
+    "bcrypt": "^5.0.0",
     "body-parser": "^1.18.3",
     "cors": "^2.8.5",
     "dotenv": "^8.0.0",
